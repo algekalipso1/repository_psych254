@@ -1,7 +1,6 @@
 ---
 title: 'Psych 254 W15 PS #1'
 author: "Mike Frank"
-student: "Andrés Gómez Emilsson"
 date: "January 11, 2015"
 output: html_document
 ---
@@ -173,6 +172,8 @@ mean_summaries <- d.tidy %>%
   group_by(object, cond) %>%
   summarise(mean(answer))
 
+mean_summaries
+
 ```
 
 OK, it's looking like there are maybe some differences between conditions, but how are we going to plot these? They are fundamentally different magnitudes from one another. 
@@ -213,6 +214,8 @@ pcts <- d.tidy %>%
   mutate(pct = 100*(1 - cost/anchor )) %>%
   group_by(item, condition) %>%
   summarise(pct = mean(pct))
+
+pcts
 ```
 
 To do the second, you will need to `group` first by item, compute z-scores with respect to items, then further group by condition.
@@ -227,6 +230,8 @@ z.scores <- d.tidy %>%
   mutate(z = scale(cost)[,1]) %>%
   group_by(condition, add = TRUE) %>%
   summarise(z = mean(z))
+
+z.scores
 
 ```
 

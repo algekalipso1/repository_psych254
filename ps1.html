@@ -193,7 +193,22 @@ d.unique.subs &lt;- d.raw %&gt;% distinct(WorkerId)</code></pre>
 ## 1     1998.848</code></pre>
 <pre class="r"><code>mean_summaries &lt;- d.tidy %&gt;% 
   group_by(object, cond) %&gt;%
-  summarise(mean(answer))</code></pre>
+  summarise(mean(answer))
+
+mean_summaries</code></pre>
+<pre><code>## Source: local data frame [9 x 3]
+## Groups: object
+## 
+##     object    cond mean(answer)
+## 1    o_dog    over  1894.793103
+## 2    o_dog rounded  1873.689310
+## 3    o_dog   under  1950.103448
+## 4 o_plasma    over  4310.689310
+## 5 o_plasma rounded  4072.965517
+## 6 o_plasma   under  3836.981034
+## 7  o_sushi    over    34.779310
+## 8  o_sushi rounded     7.921724
+## 9  o_sushi   under     7.709310</code></pre>
 <p>OK, it’s looking like there are maybe some differences between conditions, but how are we going to plot these? They are fundamentally different magnitudes from one another.</p>
 <p>Really we need the size of the deviation from the anchor, which means we need the anchor value (the <code>Input.price</code> variables that we’ve ignored up until now). Let’s go back to the data and add that in.</p>
 <p>Take a look at this complex expression. You don’t have to modify it, but see what is being done here with gather, separate and spread. Run each part (e.g. the first verb, the first two verbs, etc.) and after doing each, look at <code>head(d.tidy)</code> to see what they do.</p>
@@ -223,7 +238,22 @@ d.unique.subs &lt;- d.raw %&gt;% distinct(WorkerId)</code></pre>
 <pre class="r"><code>pcts &lt;- d.tidy %&gt;%
   mutate(pct = 100*(1 - cost/anchor )) %&gt;%
   group_by(item, condition) %&gt;%
-  summarise(pct = mean(pct))</code></pre>
+  summarise(pct = mean(pct))
+
+pcts</code></pre>
+<pre><code>## Source: local data frame [9 x 3]
+## Groups: item
+## 
+##     item condition        pct
+## 1    dog      over   24.45004
+## 2    dog   rounded   25.05243
+## 3    dog     under   21.74545
+## 4 plasma      over   13.99263
+## 5 plasma   rounded   18.54069
+## 6 plasma     under   23.07576
+## 7  sushi      over -271.57383
+## 8  sushi   rounded   11.98084
+## 9  sushi     under   10.77187</code></pre>
 <p>To do the second, you will need to <code>group</code> first by item, compute z-scores with respect to items, then further group by condition.</p>
 <p>HINT: <code>scale(x)</code> returns a complicated data structure that doesn’t play nicely with dplyr. try <code>scale(x)[,1]</code> to get what you need.</p>
 <p>HINT: by default, <code>group_by</code> undoes any previous groupings. If you want to add new grouping variables <em>on top</em> of pre-existing ones, specify <code>add = TRUE</code>, e.g., <code>d %&gt;% group_by(var1) %&gt;% group_by(var2, add = TRUE)</code>.</p>
@@ -231,7 +261,22 @@ d.unique.subs &lt;- d.raw %&gt;% distinct(WorkerId)</code></pre>
   group_by(item) %&gt;%
   mutate(z = scale(cost)[,1]) %&gt;%
   group_by(condition, add = TRUE) %&gt;%
-  summarise(z = mean(z))</code></pre>
+  summarise(z = mean(z))
+
+z.scores</code></pre>
+<pre><code>## Source: local data frame [9 x 3]
+## Groups: item
+## 
+##     item condition             z
+## 1    dog      over -0.0281930053
+## 2    dog   rounded -0.0803741802
+## 3    dog     under  0.1085671855
+## 4 plasma      over  0.2511415266
+## 5 plasma   rounded -0.0006139912
+## 6 plasma     under -0.2505275353
+## 7  sushi      over  0.2185923465
+## 8  sushi   rounded -0.1080046627
+## 9  sushi     under -0.1105876837</code></pre>
 <p>OK, now here comes the end: we’re going to plot the differences and see if anything happened. First the percent change:</p>
 <pre class="r"><code>qplot(item, pct, fill=condition,
       position=&quot;dodge&quot;,
