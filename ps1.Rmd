@@ -1,6 +1,7 @@
 ---
 title: 'Psych 254 W15 PS #1'
 author: "Mike Frank"
+student: "Andrés Gómez Emilsson"
 date: "January 11, 2015"
 output: html_document
 ---
@@ -20,22 +21,14 @@ Preliminaries
 I pretty much always clear the workspace and load the same basic helper functions before starting an analysis.
 
 ```{r prelims}
-rm(list=ls())
+#rm(list=ls())
+#getwd()
+setwd("~/Documents/Stanford/Winter2015/Psych254/hello/analyses")
 source("../helper/useful.R")
 
-#install.packages("Rcpp")
-
-#install.packages("devtools")
-#library(devtools)
-#install_github("dplyr")
-#install_github("tidyr")
-
-install.packages('dplyr', repos='http://cran.rstudio.com/')
-install.packages('tidyr', repos='http://cran.rstudio.com/')
-library(dplyr)
 library(tidyr)
 
-install.packages('ggplot2')
+#install.packages('ggplot2')
 library(ggplot2)
 ```
 
@@ -47,7 +40,7 @@ Part 1: Data cleaning
 The first part of this exercise actually just consists of getting the data in a format usable for analysis. This is not trivial. Let's try it:
 
 ```{r data1}
-d <- read.csv("../data/janiszewski_rep_exercise.csv")
+d <- read.csv("~/Documents/Stanford/Winter2015/Psych254/hello/data/janiszewski_rep_exercise.csv")
 ```
 
 Fine, right? Why can't we go forward with the analysis?
@@ -146,7 +139,7 @@ Part 3: Manipulating the data using dplyr
 Try also using the dplyr `distinct` function to remove the duplicate participants from the raw csv file that you discovered in part 1.
 
 ```{r}
-d.raw <- read.csv("../data/janiszewski_rep_exercise.csv")
+d.raw <- read.csv("~/Documents/Stanford/Winter2015/Psych254/hello/data/janiszewski_rep_exercise.csv")
 d.unique.subs <- d.raw %>% distinct(WorkerId)
 
 ```
@@ -172,38 +165,7 @@ Start by using `summarise` on `d.tidy` to compute the mean bet across all partic
 d.tidy %>% summarise(mean(answer))
 ```
 
-This is a great time to get comfortable with the `%>%` operator. In brief, `%>%` allows you to pipe data from one function to another. So if you would have written:
 
-```{r}
-d <- function(d, other_stuff)
-```
-  
-you can now write:
-
-```{r}
-d <- d %>% function(other_stufF)
-```
-
-That doesn't seem like much, but it's cool when you can replace:
-
-```{r}
-d <- function1(d, other_stuff)
-d <- function2(d, lots_of_other_stuff, more_stuff)
-d <- function3(d, yet_more_stuff)
-```
-
-with
-
-```{r}
-d <- d %>% 
-  function1(other_stuff) %>%
-  function2(lots_of_other_stuff, more_stuff) %>%
-  function3(yet_more_stuff)
-```
-
-In other words, you get to make a clean list of the things you want to do and chain them together without a lot of intermediate assignments. 
-
-Let's use that capacity to combine `summarise` with `group_by`, which allows us to break up our summary into groups. Try grouping by item and condition and taking means using `summarise`, chaining these two verbs with `%>%`.
 
 ```{r}
 
