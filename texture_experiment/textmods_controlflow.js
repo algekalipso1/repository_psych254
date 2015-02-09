@@ -179,7 +179,7 @@ var experiment = {
 		for (i=0;i<3;i++) {
 			user_input_selection += '<td width=98px height=50px align="center"' + 
 				' class="unchosen answerTable" ' +
-				'id="tdchoice' + String(i + trial_counter) + '" ' +
+				'id="tdchoice' + String(trial_counter) + ',' + String(i) +  '" ' +
 				'onclick=\"experiment.select(' + String(trial_counter) + ',' + String(i) + ')\">';
 			user_input_selection +=  '<br>' + number_to_name[i];
 			user_input_selection += '</td>';
