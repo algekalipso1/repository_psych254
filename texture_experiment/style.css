@@ -70,17 +70,17 @@ button[disabled] {
 }
 
 
-/* The Stle of the stimuli */
+/* The Style of the stimuli */
 .trifectalCenter {
   position: absolute;
-  top: 40%;
+  top: 30%;
   left: 40%;
 }
 
 .leftImage {
    position: relative;
-   top: 35px;
-   right: 35px;
+   top: 55px;
+   right: 0px;
    visibility: hidden;
 }
 
@@ -93,21 +93,21 @@ button[disabled] {
 
 .rightImage {
    position: relative;
-   top: 35px;
-   right: -35px;
+   top: 55px;
+   right: 0px;
    visibility: hidden;
 }
 
 .fixationCenter {
   position: absolute;
-  top: 10%;
+  top: 40%;
   right: 50%;
 }
 
 
 
 p.simpleText {
-  position: absolute;
+  position: relative;
   top: 80%;
   right: 50%;
 }
@@ -115,8 +115,19 @@ p.simpleText {
 
 .answerTable {
   position: relative;
-  top: 10%;
+  top: 50%;
   right: 50%;
+}
+
+.responseTable {
+  position: absolute;
+  top: 40%;
+  left: 20%;
+}
+
+
+.used_button {
+  cursor: not-allowed;
 }
 
 

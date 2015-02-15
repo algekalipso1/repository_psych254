@@ -1,4 +1,4 @@
-<!DOCTYPE html> <!-- You need to add this line so that IE renders fun CSS style stuff like unchosen:hover -->
+<!-- <!DOCTYPE html> You need to add this line so that IE renders fun CSS style stuff like unchosen:hover --> 
 <html>
   <head>
     <title>Identify the texture that's different.</title>
@@ -66,7 +66,7 @@
       <p class="block-text">In this experiment we will show you sets of three pictures. One of those
       pictures will be different than the other two. In each case you will see either one or two "original textures" and one or two "synthesized textures." If there is one "original texture" then there will be two synthesized textures, and vice versa. The synthesized texture is intended to look as similar as possible to the original texture. Your task will be to identify the "odd one out" of the three (if there is one synthesized, then choose that, and if there is one original then choose that). <br> <br> 
       You will be shown an equilateral triangle and you will have to center your vision by looking at the dot in the center of the triangle.
-      <img src="images/full_set/33-peacock-black-whijpg_0.bmp" width=75px alt="peacock"></p>
+      <!-- <img src="images/full_set/33-peacock-black-whijpg_0.bmp" width=75px alt="peacock"></p> -->
 
 
       <div id="familiarizationText"> </div>
@@ -87,20 +87,13 @@
       <div id="exampleText"> </div>
       <div class="trifectalCenter"> <!--  <div align = "center">-->
         <div class = "fixationCenter"> X </div>
-
         <div id="exampleImages" > </div>
       </div>
-
-      <table align="center"><tr><td align="center">
+      <div class = "responseTable">
+        <div id="selectionExample"> </div>
         <div id = "show_button"> </div>
-        </td></tr>
-        <tr><td align="center">
-         <div id="example_button_text"> </div>
-        </td></tr>
-      </table>
-      <p> Instructions </p>
-      <div id="selectionExample"> </div>
-      <button type="button" id="goToTrials" onClick="experiment.next_real_trial()">Next</button> 
+      <button type="button" id="goToTrials" onClick="experiment.next_real_trial(); experiment.disable_next();">Next</button> 
+      </div>
     </div>
 
 
@@ -108,25 +101,45 @@
       <!-- The actual trials, in sequence.--> 
     <div class="slide" id="series_of_trials">
       <div id="trialText"> </div>
+      <br>
       <div class="trifectalCenter"> <!--  <div align = "center">-->
         <div class = "fixationCenter"> X </div>
         <div id="trialImages" > </div>
       </div>
-      <table align="center"><tr><td align="center">
+      <div class = "responseTable">
+        <div id="userSelectionInputFields"> </div>
         <div id = "show_trial_button"> </div>
-        </td></tr>
-        <tr><td align="center">
-         <div id="example_button_text"> </div>
-        </td></tr>
-      </table>
-      <p> Now it's for real. </p>
-      <div id="userSelectionInputFields"> </div>
-      <div id = "go_next_trial_button"> </div>
-    </div>
-    <div class="slide" id= "end_slide">
-      <p class="simple_text"> End slide </p>
+        <div id = "go_next_trial_button"> </div>
+      </div>
     </div>
 
+    <!-- End slide -->
+    <div class="slide" id= "end_slide">
+      <p class="simple_text"> Optional: </p>
+      <p class="block-text">
+        What was this survey about? : <br>
+        <input type="text" id="about" name="about" size="70"> 
+      </p>
+      <p class="block-text" name="comments" >
+        Any other comments for us? : <br>
+        <input type="text" id="comments" name="comments" size="70"> 
+      </p>
+      <p class="block-text" name="age" >
+        How old are you? (optional): <br>
+        <input type="text" id="age" name="age" size="70"> 
+      </p>
+      <p class="block-text" name="gender" >
+        What is your gender? (m = male, f = female, o = other; optional): <br>
+        <input type="text" id="gender" name="gender" size="70"> 
+      </p>
+      <button type="button" id="send_to_turk" onClick="experiment.check_finished();">Submit</button> 
+    </div>
+
+    <div class="slide" id="finished">
+      <p class="block-text">
+        You're finished - thanks for participating! Submitting to Mechanical Turk...
+      </p>
+    </div>
 
     <script src="textmods_helper_functions.js"></script>
 

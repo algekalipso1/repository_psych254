@@ -85,10 +85,11 @@ function showAndHide(id) {
     img.style.visibility = 'visible';
     var interval = window.setInterval(function(){
         img.style.visibility = 'hidden';
-    }, 1000);
+    }, 250);
 }
 
 
+// Here list all of the possible stimuli combinations 
 
 
 // create HTML for property matrix and base image
@@ -168,6 +169,15 @@ function getNameRadioValue(idNameList) {
     return valueReturned;
 }
 
+
+
+function sumElements(arr) {
+    var total_value = 0;
+    for (var i =0; i < arr.length; i++) {
+        total_value += arr[i];
+    }
+    return total_value
+}
 
 
 
