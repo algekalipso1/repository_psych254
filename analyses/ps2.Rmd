@@ -1,0 +1,393 @@
+---
+title: 'Psych 254 W15 PS #2'
+author: "Mike Frank"
+date: "February 4, 2015"
+output: html_document
+---
+
+This is problem set #2, in which we hope you will practice the visualization package ggplot2, as well as hone your knowledge of the packages tidyr and dplyr. 
+
+Part 1: Basic intro to ggplot
+=============================
+
+Part 1A: Exploring ggplot2 using qplot
+--------------------------------------
+
+Note, that this example is from the_grammar.R on http://had.co.nz/ggplot2 
+I've adapted this for psych 254 purposes
+
+First install and load the package.
+
+```{r}
+#install.packages("ggplot2")
+library(ggplot2)
+```
+
+Now we're going to use qplot. qplot is the easy interface, meant to replace plot. You can give it simple `qplot(x,y)` examples, or slightly more complex examples like `qplot(x, y, col=grp, data=d)`. 
+
+We're going to be using the diamonds dataset. This is a set of measurements of diamonds, along with their price etc.
+
+```{r}
+head(diamonds)
+
+used_rows <- runif(53940) < .01
+
+diamonds_used <- subset(diamonds, used_rows)
+
+qplot(diamonds_used$carat, diamonds_used$price)
+```
+
+Scatter plots are trivial, and easy to add features to. Modify this plot so that it uses the dataframe rather than working from variables in the general namespace (good to get away from retyping `diamonds$` every time you reference a variable). 
+
+```{r}
+
+qplot(carat, price, data = diamonds_used)
+
+```
+
+Try adding clarity and cut, using shape and color as your visual variables. 
+
+```{r}
+?qplot
+names(diamonds)
+d <- qplot(carat, price, data = diamonds_used, colour = clarity, shape = cut)
+d + scale_colour_brewer(palette="Set1")
+d
+```
+
+One of the primary benefits of `ggplot2` is the use of facets - also known as small multiples in the Tufte vocabulary. That last plot was probably hard to read. Facets could make it better. Try adding a `facets = x ~ y` argument. `x ~ y` means row facets are by x, column facets by y. 
+
+```{r}
+qplot(carat, price, data = diamonds_used, colour = color, shape = cut, facets =  ~ clarity)
+```
+
+
+But facets can also get overwhelming. Try to strike a good balance between color, shape, and faceting.
+
+HINT: `facets = . ~ x` puts x on the columns, but `facets = ~ x` (no dot) *wraps* the facets. These are underlying calls to different functions, `facet_wrap` (no dot) and `facet_grid` (two arguments). 
+
+```{r}
+qplot(carat, price, data = diamonds_used, colour = clarity, shape = cut, facets = . ~ price)
+```
+
+The basic unit of a ggplot plot is a "geom" - a mapping between data (via an "aesthetic") and a particular geometric configuration on coordinate axes. 
+
+Let's try some other geoms and manipulate their parameters. First, try a histogram (`geom="hist"`). 
+
+```{r}
+qplot(carat, data = diamonds_used, geom = "histogram")
+```
+
+Now facet your histogram by clarity and cut. 
+
+```{r}
+qplot(carat, data = diamonds_used, geom = "histogram", facets = clarity ~ cut, binwidth = 0.05)
+```
+
+I like a slightly cleaner look to my plots. Luckily, ggplot allows you to add "themes" to your plots. Try doing the same plot but adding `+ theme_bw()` or `+ theme_classic()`. Different themes work better for different applications, in my experience. 
+
+```{r}
+d <- qplot(carat, data = diamonds_used, geom = "histogram", facets = color ~ cut, binwidth = 0.05)
+d + theme_classic()
+```
+
+Part 1B: Exploring ggplot2 using ggplot
+---------------------------------------
+
+`ggplot` is just a way of building `qplot` calls up more systematically. It's
+sometimes easier to use and sometimes a bit more complicated. What I want to show off here is the functionality of being able to build up complex plots with multiple elements. You can actually do this using qplot pretty easily, but there are a few things that are hard to do. 
+
+`ggplot` is the basic call, where you specify A) a dataframe and B) an aesthetic mapping from variables in the plot space to variables in the dataset. 
+
+```{r}
+d <- ggplot(diamonds_used, aes(x=carat, y=price)) # first you set the aesthetic and dataset
+d + geom_point() # then you add geoms
+d + geom_point(aes(colour = carat)) # and you can keep doing this to add layers to the plot
+```
+
+Try writing this as a single set of additions (e.g. one line of R code, though you can put in linebreaks). This is the most common workflow for me. 
+
+
+```{r}
+d <- ggplot(diamonds_used, aes(x=carat, y=price)) +
+  geom_point() +
+  geom_point(aes(colour = cut))
+d
+```
+
+
+You can also set the aesthetic separately for each geom, and make some great plots this way. Though this can get complicated. Try using `ggplot` to build a histogram of prices. 
+
+```{r}
+d <- ggplot(diamonds_used, aes(x=price, fill=as.factor(color))) +
+  geom_histogram(binwidth = 200)
+d
+```
+
+Part 2: Diving into real data: Sklar et al. (2012)
+==================================================
+
+Sklar et al. (2012) claims evidence for unconscious arithmetic processing. We're going to do a reanalysis of their Experiment 6, which is the primary piece of evidence for that claim. The data are generously contributed by Asael Sklar. 
+
+First let's set up a few preliminaries. 
+
+```{r}
+library(tidyr)
+library(dplyr)
+
+sem <- function(x) {sd(x) / sqrt(length(x))}
+ci95 <- function(x) {sem(x) * 1.96}
+```
+
+Data Prep
+---------
+
+First read in two data files and subject info. A and B refer to different trial order counterbalances. 
+
+```{r}
+subinfo <- read.csv("../data/sklar_expt6_subinfo_corrected.csv")
+d.a <- read.csv("../data/sklar_expt6a_corrected.csv")
+d.b <- read.csv("../data/sklar_expt6b_corrected.csv")
+```
+
+Gather these datasets into long form and get rid of the Xs in the headers.
+
+```{r}
+head(subinfo)
+head(d.a)
+head(d.b)
+
+names(d.a)[8:28] <- 1:21
+names(d.b)[8:28] <- 22:42
+
+d.tidy.a <- d.a %>% gather("subid", "answer", 8:28)
+d.tidy.b <- d.b %>% gather("subid", "answer", 8:28)
+
+
+
+```
+
+Bind these together. Check out `bind_rows`.
+
+```{r}
+tidy.ab <- bind_rows(d.tidy.a, d.tidy.b)
+```
+
+Merge these with subject info. You will need to look into merge and its relatives, `left_join` and `right_join`. Call this dataframe `d`, by convention. 
+
+```{r}
+
+head(tidy.ab)
+
+tidy.ab$subid <- as.integer(tidy.ab$subid)
+d <- left_join(tidy.ab, subinfo, by = "subid")
+
+```
+
+Clean up the factor structure.
+
+```{r}
+d$presentation.time <- factor(d$presentation.time)
+levels(d$operand) <- c("addition","subtraction")
+```
+
+Data Analysis Preliminaries
+---------------------------
+
+Examine the basic properties of the dataset. First, take a histogram.
+
+```{r}
+
+pl <- ggplot(d, aes(x=answer, fill=as.factor(operand))) +
+  geom_histogram(binwidth = 10)
+
+pl
+```
+
+Challenge question: what is the sample rate of the input device they are using to gather RTs?
+
+```{r}
+pl <- ggplot(d, aes(x=answer, fill=as.factor(operand))) +
+  geom_histogram(binwidth = 10)
+
+possible_values <- as.integer(names(table(d$answer)))
+x <- c()
+for (i in 1:(length(possible_values) - 1)) {
+  x <- c(x, possible_values[i + 1] - possible_values[i])
+}
+table(x)
+
+# Since the resulting table actually has 58 "1"s we can easily conclude that the sampling rate to gather RTs is at most slighly under 2 miliseconds (so that 1 milisecond intervals can be measured in some cases). Most likely it is sub-milisecond precision.
+
+```
+
+Sklar et al. did two manipulation checks. Subjective - asking participants whether they saw the primes - and objective - asking them to report the parity of the primes (even or odd) to find out if they could actually read the primes when they tried. Examine both the unconscious and conscious manipulation checks (this information is stored in subinfo). What do you see? Are they related to one another?
+
+```{r}
+names(d)
+
+sub_obj_scat <- ggplot(d, aes(x = objective.test, y = subjective.test)) +
+                    geom_point(aes(colour = answer)) +
+                    stat_smooth( aes(y = subjective.test),  method="glm", family="binomial", se=F) 
+
+sub_obj_scat # This looks pretty good.
+
+sub_obj_hist <- ggplot(d, aes(x=objective.test)) +
+  geom_histogram(binwidth = .05) +
+  facet_grid( ~ subjective.test)
+
+sub_obj_hist # And this is just to have both histograms side by side.
+                  
+```
+
+OK, let's turn back to the measure and implement Sklar et al.'s exclusion criterion. You need to have said you couldn't see (subjective test) and also be not significantly above chance on the objective test (< .6 correct). Call your new data frame `ds`.
+
+```{r}
+ds <- subset(d, d$subjective.test == 0 & d$objective.test < .6 & !is.na(d$answer))
+```
+
+Sklar et al.'s analysis
+-----------------------
+
+Sklar et al. show a plot of a "facilitation effect" - the time to respond to incongruent primes minus the time to respond to congruent primes. They then plot this difference score for the subtraction condition and for the two presentation times they tested. Try to reproduce this analysis.
+
+HINT: first take averages within subjects, then compute your error bars across participants, using the `sem` function (defined above). 
+
+```{r}
+
+ds_1700 <- subset(ds, ds$presentation.time == 1700)
+ds_2000 <- subset(ds, ds$presentation.time == 2000)
+
+rt_1700_id <- group_by(ds_1700, subid, congruent)
+
+rt_1700 <- rt_1700_id %>% 
+  summarise(mean_t = mean(answer)) %>%
+  spread(congruent, mean_t) %>%
+  mutate(diff = yes - no)
+
+m1 <- mean(rt_1700$diff)
+se1 <- sem(rt_1700$diff)
+
+rt_2000_id <- group_by(ds_2000, subid, congruent)
+
+rt_2000 <- rt_2000_id %>% 
+  summarise(mean_t = mean(answer)) %>%
+  spread(congruent, mean_t) %>%
+  mutate(diff = yes - no)
+
+m2 <- mean(rt_2000$diff)
+se2 <- sem(rt_2000$diff)
+
+
+```
+
+Now plot this summary, giving more or less the bar plot that Sklar et al. gave (though I would keep operation as a variable here. Make sure you get some error bars on there (e.g. `geom_errorbar` or `geom_linerange`). 
+
+```{r}
+
+means <- data.frame(means = c(m1, m2), sems = c(se1, se2))
+
+
+means.barplot <- qplot(x = sems, y=means, 
+                       data=means, geom="bar", stat="identity")
+
+means.barplot + geom_errorbar(aes(ymax=means + sems,
+                                  ymin=means - sems),
+                              position=position_dodge(0.9),
+                              data=means)
+
+```
+
+What do you see here? How close is it to what Sklar et al. report? Do the error bars match? How do you interpret these data? 
+
+Answer: The bar plots do not match those shown in the paper. I've tried to figure out why but with not success. Since I'm error prone, my interpretation is that I messed up at some point in the analysis.
+
+Challenge problem: verify Sklar et al.'s claim about the relationship between RT and the objective manipulation check.
+
+```{r}
+
+
+```
+
+Your own analysis
+-----------------
+
+Show us what you would do with these data, operating from first principles. What's the fairest plot showing a test of Sklar et al.'s original hypothesis that people can do arithmetic "non-consciously"?
+
+```{r}
+# My main concerns are two. 
+# First, I'm unsure about the exclusion criteria (where only 2531 trials, and 17 subjects remain after the exclusion).
+# Second, it seems that by substracting the *mean* of the congruent from  the incongruent conditions you are actually taking away some of the valuable information. In particular, you are taking the variance between those means.
+
+# While I don't have an insight into how to improve the first point, I think that plotting the *effect sizes* instead of differences between the means is what would actually show the effect properly. 
+
+ds <- subset(d, d$subjective.test == 0 & d$objective.test < .6 & !is.na(d$answer))
+
+
+
+
+ds_1700 <- subset(ds, ds$presentation.time == 1700)
+ds_2000 <- subset(ds, ds$presentation.time == 2000)
+
+grouped_ds <- group_by(ds_1700, subid, congruent)
+
+rt_means <- grouped_ds %>% 
+  summarise(mean_t = mean(answer)) %>%
+  spread(congruent, mean_t)
+
+rt_sds <- grouped_ds %>% 
+  summarise(sd_t = sd(answer)) %>%
+  spread(congruent, sd_t) 
+
+rt_sds<- rt_sds[,2:3]
+colnames(rt_sds) <- c("no_sd", "yes_sd")
+  
+v.1700 <- cbind(rt_means, rt_sds)
+
+#compute effect size
+v.1700 <- mutate(v.1700, es = (yes - no) / sqrt((no_sd^2 + yes_sd^2)/2))
+mes1 <- mean(v.1700$es)
+sees1 <- sem(v.1700$es)
+
+
+grouped_ds_2000 <- group_by(ds_2000, subid, congruent)
+
+rt_means_2000 <- grouped_ds_2000 %>% 
+  summarise(mean_t = mean(answer)) %>%
+  spread(congruent, mean_t)
+
+rt_sds_2000 <- grouped_ds_2000 %>% 
+  summarise(sd_t = sd(answer)) %>%
+  spread(congruent, sd_t) 
+
+rt_sds_2000<- rt_sds_2000[,2:3]
+colnames(rt_sds_2000) <- c("no_sd", "yes_sd")
+  
+v.2000 <- cbind(rt_means_2000, rt_sds_2000)
+
+# compute effect size
+v.2000 <- mutate(v.2000, es = (yes - no) / sqrt((no_sd^2 + yes_sd^2)/2))
+
+mes2 <- mean(v.2000$es)
+sees2 <- sem(v.2000$es)
+
+
+
+# Plot in bars the mean effect size and the standard error of the mean effect size. 
+mean.es <- data.frame(es = c(mes1, mes2), sems = c(sees1, sees2))
+
+
+mean.es.barplot <- qplot(x = sems, y=es, 
+                       data=mean.es, geom="bar", stat="identity")
+
+mean.es.barplot + geom_errorbar(aes(ymax=es + sems,
+                                  ymin=es - sems),
+                              position=position_dodge(0.9),
+                              data=mean.es)
+
+```
+
+Challenge problem: Do you find any statistical support for Sklar et al.'s findings?
+
+```{r}
+```
