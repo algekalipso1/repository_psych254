@@ -58,6 +58,26 @@ var experiment = {
 	response_37: -1,
 	response_38: -1,
 	response_39: -1,
+	response_40: -1,
+	response_41: -1,
+	response_42: -1,
+	response_43: -1,	
+	response_44: -1,
+	response_45: -1,
+	response_46: -1,
+	response_47: -1,
+	response_48: -1,
+	response_49: -1,
+	response_50: -1,
+	response_51: -1,
+	response_52: -1,
+	response_53: -1,	
+	response_54: -1,
+	response_55: -1,
+	response_56: -1,
+	response_57: -1,
+	response_58: -1,
+	response_59: -1,
 
 	total_left:0,
 	total_top:0,
@@ -65,60 +85,13 @@ var experiment = {
 
 	total_correct:0,
 
+	correct_ordered_trials: correct_by_trial,
+
 	// Free form text given by the participant
 	about: "",
 	comment: "",
 	age: "",
 	gender: "",
-
-
-	next_familiarization: function() {
-	    // Allow experiment to start if it's a turk worker OR if it's a test run
-	    // Warning, it may not be security best practices... you know why
-		if (window.self == window.top | turk.workerId.length > 0) {
-
-			// When there is a familiarization stage that sets up the priors.
-			if (familiarization_status == 1) {
-				// FAMILIARIZATION INSTRUCTIONS
-				var familiarization_html = '<p class="block-text"">Bob really likes to ' + 
-				actions[0] + ' ' + plural + '. <br>' +
-				'Every ' + times[0] + ' he ' + actions[1] + ' a ' + base + '.<p>' +
-				'<p class="block-text">Click on each ' + times[1].toLowerCase() + ' to see the ' + base + ' Bob ' + actions[2] + '.</p>';
-				$("#familiarizationText").html(familiarization_html);
-
-				// TIME BY TIME POPUPS FOR FAMILIARIZATION
-				// Here are all the different elements that will be displayed in the familiarization task
-				// most likely it will always be 9, but not necessarily
-				// That is why we have a table here
-				var familiarization_objects_html = '<table align="center"><tr>';
-
-				for (i=0;i<=instances_in_familiarization-1;i++){
-					familiarization_objects_html += '<td width=200px height=230px align="center" ' +
-						'class="objTable"' + 
-						'id="famTable' + String(i) + 
-						'" onclick="experiment.reveal(' + String(i) + ')">';
-					familiarization_objects_html += '<br><br><br><br>' +times[1] + ' ' + String(i+1) + ', Bob ' + actions[2] 
-						+ ':<div id="day' + String(i) + '"> </div>';
-					if ((i+1)%3 == 0) {
-						familiarization_objects_html += "</tr><tr>";
-					}
-				}
-				familiarization_objects_html += '</tr></table>';
-				$("#famObjects").html(familiarization_objects_html);
-			} else {
-				experiment.target_frequency = 0;
-				experiment.familiarization_cond = -1;
-				// Instructions when there is no familiarization: Presenting Bob and explaning what that Bob does.
-				// The importance of this slide in this condition (familiarization_status == 0) is to reiffy 
-				// the social situation. In other words, make it clear that *someone* is asking you about the person.
-				var familiarization_html = '<p class="block-text"">Bob really likes to ' + 
-				actions[0] + ' ' + plural + '. <br>' + 
-				'Every ' + times[0] + ' he ' + actions[1] + ' a ' + base + '.<p>';
-				$("#familiarizationText").html(familiarization_html);
-			}
-			showSlide("prestage");	
-		}
-	},
 
 
 	next_description: function() {
@@ -131,60 +104,137 @@ var experiment = {
 		showSlide("instructions");	
 	},
 
-	next_example_trial: function() {
+	calibration_trial: function() {
+		var example_text_explanation = "Calibration.<br> <br>";
+		example_text_explanation += " To standarize the angle of vision please extend your right arm while sticking your thumb up.";
+		example_text_explanation += " Then place your thumbnail between your right eye and the blue circle (bottom right). Close your left eye and look at your thumbnail with your right eye.";
+		example_text_explanation += " If your thumbnail fully covers the circle when you touch the screen with your thumb then stay there. If your thumbnail's width is smaller than the circle's diameter, then move away from the screen (and maintain";
+		example_text_explanation +=	" the alignment between your right eye, your thumbnail and the circle) until your thumbnail just prevents you from seeing the blue circle.";
+		example_text_explanation += " That is, stop at the point where your thumb perfectly covers the circle. Then stay at that distance from the computer for all of the following trials.";
+		example_text_explanation += " Click the next button to start the example trials.";
+      	$("#calibrationText").html(example_text_explanation);
+      	var place_count = 0;
+      	var triT = '<table id = "example_table" class = "tdt">';
+      	for (i = 0; i < 4; i ++) {
+      		triT += '<tr>';
+      		for (j = 0; j < 5; j ++) {
+      			triT += '<td width=64px height=64px>';
+      			if ((i == 0 && j == 2) || (i == 3 && (j == 0 || j == 4) ))  {
+      				triT += '<img class = "imageCalibration" id = "crgb' + String(i + 1) + '" width=64px height=64px src="' + calibration_images[place_count] +  '">'
+      				place_count += 1;
+      			}
+      			if (i == 2 && j == 2) {
+      				triT += '<p align = "center">X</p>';
+      			}
+      			triT += '</td>';
+      		}
+      		triT += '</tr>';
+      	}
+      	triT += '</table>';
+      	$("#triangularTableCalibration").html(triT);
 
+		var next_after_calibration = 'experiment.next_example_trial()';
 
-		var example_text_explanation = "You will choose the odd one out."
-      	$("#exampleText").html(example_text_explanation);
-
-      	var image_sources_for_example = ["images/after_script/pseudoperiodic/original/4_0.bmp", "images/after_script/pseudoperiodic/full_set/4_0.bmp", "images/after_script/pseudoperiodic/full_set/4_1.bmp"];
-
-		var imagesHtmlCode = '';
-		if (odd_one_place == 0) {
-			imagesHtmlCode += '<img src='+ image_sources_for_example[0] + ' width=128px alt="threads" id="ps1" class = ' + orders_list[odd_one_place][0] + '>';
-			imagesHtmlCode += '<img src='+ image_sources_for_example[1] + ' width=128px alt="peacock" id="ps2" class = ' + orders_list[odd_one_place][1] + '>';
-	        imagesHtmlCode +=  '<img src='+ image_sources_for_example[2] + ' width=128px alt="peacock" id="ps3" class = ' + orders_list[odd_one_place][2] + '>';	
-		}
-		if (odd_one_place == 1) {
-			imagesHtmlCode += '<img src='+ image_sources_for_example[1] + ' width=128px alt="peacock" id="ps2" class = ' + orders_list[odd_one_place][1] + '>';
-	        imagesHtmlCode +=  '<img src='+ image_sources_for_example[2] + ' width=128px alt="peacock" id="ps3" class = ' + orders_list[odd_one_place][2] + '>';	
-			imagesHtmlCode += '<img src='+ image_sources_for_example[0] + ' width=128px alt="threads" id="ps1" class = ' + orders_list[odd_one_place][0] + '>';
-		}
-		if (odd_one_place == 2) {
-	        imagesHtmlCode +=  '<img src='+ image_sources_for_example[2] + ' width=128px alt="peacock" id="ps3" class = ' + orders_list[odd_one_place][2] + '>';	
-			imagesHtmlCode += '<img src='+ image_sources_for_example[0] + ' width=128px alt="threads" id="ps1" class = ' + orders_list[odd_one_place][0] + '>';
-			imagesHtmlCode += '<img src='+ image_sources_for_example[1] + ' width=128px alt="peacock" id="ps2" class = ' + orders_list[odd_one_place][1] + '>';
-		}
-      	$("#exampleImages").html(imagesHtmlCode);
-
-      	var button_to_show = '<button type="button" id="showImagesButton" onClick="showAndHide(\'ps1\'); showAndHide(\'ps2\'); showAndHide(\'ps3\')">Show image</button>';
-      	$("#show_button").html(button_to_show);
+      	var button_advance = '<button class = "buttonAttr" type="button" id="calibration_next" onClick="experiment.next_example_trial();">Next</button>';
 
       	var  user_input_selection = '';
 		user_input_selection += '<table align="center"><tr>';
 		for (i=0;i<3;i++) {
 			user_input_selection += '<td width=98px height=50px align="center"' + 
-				' class="unchosen answerTable" ' +
-				'id="exampleChoice' + String(i) + '" ' +
-				'onclick=\"experiment.select(' + String(-1) + ',' + String(i) + ');\">';
+				' class="unchosen" ' +
+				'id="calibrationChoice' + String(i) + '_'  + String(0) + '" ' +
+				'onclick=\"' + next_after_calibration + '; experiment.select(' + String(-1) + ',' + String(i) + ');\">';
 			user_input_selection +=  '<br>' + number_to_name[i];
 			user_input_selection += '</td>';
 		}
-		user_input_selection += '</tr><tr>';
+		user_input_selection += '</tr>';
+		user_input_selection += '<td></td>';
+		user_input_selection += '<td>' +  button_advance + '</td>';
+		user_input_selection += '<td></td>';
+		user_input_selection +='<tr>';
 		user_input_selection += '</tr></table>';
-		$("#selectionExample").html(user_input_selection)
-
-		showSlide("example_trial");
+		$("#selectionCalibration").html(user_input_selection)
+		showSlide("calibration_trial");
 	},
 
+	next_example_trial: function() {
 
+		example_count += 1;
+		var example_text_explanation = "Example trial #" + String(example_count + 1) + ".<br><br>";
+		if (example_count < 3) {
+			example_text_explanation += "Instructions: You will choose the odd one out by clicking in the corresponding button. In the real trials you have to center your vision in the X at the center of the screen. <br><br> "
+			example_text_explanation += " You can click the 'show' button several times during these 4 example trials. For the first three example trials, the pictures will appear for 2 seconds so you can familiarize yourself with the differences between the pictures.";
+			example_text_explanation += " In the 4th example trial the pictures will be displayed for only a quarter of a second (250 miliseconds). That will be the presentation time for all of the subsequent trials. Notice that the correct";
+			example_text_explanation += " answer is the top image. In the real trials the odd one out can be in any position with equal probability. <br> <br> To advance, simply click on one of the options.";
+		}
+		if (example_count == 3) {
+			example_text_explanation += "This is the last example trial. Feel free to click the show button several times. Now the display time is 250 milliseconds, the same as that for the real trials.";
+			example_text_explanation += " Note: The correct answer for this example is the top image.";
+		}
+      	$("#exampleText").html(example_text_explanation);
+
+      	var place_count = 0;
+      	var triT = '<table id = "example_table" class = "tdt">';
+      	for (i = 0; i < 4; i ++) {
+      		triT += '<tr>';
+      		for (j = 0; j < 5; j ++) {
+      			triT += '<td width=64px height=64px>';
+      			if ((i == 0 && j == 2) || (i == 3 && (j == 0 || j == 4) ))  {
+      				triT += '<img class = "imageCorner" id = "ps' + String(odd_one_cycle[odd_one_place][place_count] + 1) + '" width=64px height=64px src="' + image_sources_for_example[example_count][odd_one_cycle[odd_one_place][place_count]] + '">'
+      				place_count += 1;
+      			}
+      			if (i == 2 && j == 2) {
+      				triT += '<p align = "center">X</p>';
+      			}
+      			triT += '</td>';
+      		}
+      		triT += '</tr>';
+      	}
+      	triT += '</table>';
+      	$("#triangularTableExample").html(triT);
+
+      	// The "Show" button. 
+      	var button_show_id = 'exampleShow' + trial_counter;
+      	var button_to_show = '<button class = "buttonAttr" type="button" id="' +  button_show_id +  '" onClick="showAndHide(\'ps1\', 2000); showAndHide(\'ps2\', 2000); showAndHide(\'ps3\', 2000); justShow(\'exampleChoice' + String(0) +  '_'  + String(example_count) +'\'); justShow(\'exampleChoice' + String(1) +  '_'  + String(example_count) +'\'); justShow(\'exampleChoice' + String(2) + '_'  + String(example_count) + '\'); experiment.clicked_show();">Show</button>';
+      	if (example_count == 3) {
+      		button_to_show = '<button class = "buttonAttr" type="button" id="' +  button_show_id +  '" onClick="showAndHide(\'ps1\', 250); showAndHide(\'ps2\', 250); showAndHide(\'ps3\', 250); justShow(\'exampleChoice' + String(0) +  '_'  + String(example_count) +'\'); justShow(\'exampleChoice' + String(1) +  '_'  + String(example_count) +'\'); justShow(\'exampleChoice' + String(2) + '_'  + String(example_count) + '\'); experiment.clicked_show();">Show</button>';
+      	}
+
+		var next_depending_on_trial = '';
+      	
+      	if (example_count < 3) {
+      		next_depending_on_trial += 'experiment.next_example_trial()';
+      	} 
+      	if (example_count == 3) {
+      		next_depending_on_trial += 'experiment.next_real_trial()';
+      	};
+
+      	var  user_input_selection = '';
+		user_input_selection += '<table align="center"><tr>';
+		for (i=0;i<3;i++) {
+			user_input_selection += '<td width=98px height=50px align="center"' + 
+				' class="unchosen" ' +
+				'id="exampleChoice' + String(i) + '_'  + String(example_count) + '" ' +
+				'onclick=\"' + next_depending_on_trial + '; experiment.select(' + String(-1) + ',' + String(i) + ');\">';
+			user_input_selection +=  '<br>' + number_to_name[i];
+			user_input_selection += '</td>';
+		}
+		user_input_selection += '</tr>';
+		user_input_selection += '<td></td>';
+		user_input_selection += '<td>' + button_to_show + '</td>';
+		user_input_selection += '<td></td>';
+		user_input_selection +='<tr>';
+		user_input_selection += '</tr></table>';
+		$("#selectionExample").html(user_input_selection)
+		showSlide("example_trial");
+	},
 
 
 
 	next_real_trial: function() {
 		has_clicked_show = 0;
       	trial_counter += 1;
-		var example_text_explanation = "You will choose the odd one out. <br> (Now it is for real) <br> Trial " + String(trial_counter + 1) + " /" + String(number_of_trials);
+		var example_text_explanation = "Choose the odd one out. <br> (Now it is for real) <br> Trial " + String(trial_counter + 1) + " /" + String(number_of_trials);
       	$("#trialText").html(example_text_explanation);
       	var picture_1 = list_of_image_paths[sequence_order[trial_counter]][0];
       	var picture_2 = list_of_image_paths[sequence_order[trial_counter]][1];
@@ -192,52 +242,72 @@ var experiment = {
       	var identity_of_1 = String(3*trial_counter + 4);
       	var identity_of_2 = String(3*trial_counter + 5);
       	var identity_of_3 = String(3*trial_counter + 6);
+      	var identities = [identity_of_1, identity_of_2, identity_of_3];
 		var imagesHtmlCode = '';
 		odd_one_place = odd_one_position[sequence_order[trial_counter]];
-		if (odd_one_place == 0) {
-			imagesHtmlCode += '<img src="'  + picture_1 + '" width=128px id="ps' + identity_of_1 + '" class = ' + orders_list[odd_one_place][0] + '>';
-			imagesHtmlCode += '<img src="'+ picture_2 + '" width=128px id="ps' + identity_of_2 + '" class = ' + orders_list[odd_one_place][1] + '>';
-	        imagesHtmlCode +=  '<img src="'+ picture_3 + '" width=128px id="ps' + identity_of_3 + '" class = ' + orders_list[odd_one_place][2] + '>';	
-		};
-		if (odd_one_place == 1) {
-			imagesHtmlCode += '<img src="'+ picture_2 + '" width=128px id="ps' + identity_of_2 + '" class = ' + orders_list[odd_one_place][1] + '>';
-	        imagesHtmlCode +=  '<img src="'+ picture_3 + '" width=128px id="ps' + identity_of_3 + '" class = ' + orders_list[odd_one_place][2] + '>';	
-			imagesHtmlCode += '<img src="'+ picture_1 + '" width=128px id="ps' + identity_of_1 + '" class = ' + orders_list[odd_one_place][0] + '>';
-		};
-		if (odd_one_place == 2) {
-	        imagesHtmlCode +=  '<img src="'+ picture_3 + '" width=128px id="ps' + identity_of_3 + '" class = ' + orders_list[odd_one_place][2] + '>';	
-			imagesHtmlCode += '<img src="'+ picture_1 + '" width=128px id="ps' + identity_of_1 + '" class = ' + orders_list[odd_one_place][0] + '>';
-			imagesHtmlCode += '<img src="'+ picture_2 + '" width=128px id="ps' + identity_of_2 + '" class = ' + orders_list[odd_one_place][1] + '>';
-		};
-      	$("#trialImages").html(imagesHtmlCode);
 
-      	var button_to_show = '<button type="button" id="showImagesButton" onClick="showAndHide(\'ps' + identity_of_1 + '\'); showAndHide(\'ps' + identity_of_2 + '\'); showAndHide(\'ps' + identity_of_3 + '\'); experiment.disable_show(); experiment.clicked_show();">Show image</button>';
-      	$("#show_trial_button").html(button_to_show);
+
+      	var place_count = 0;
+      	var triT = '<table id = "actual_table" class = "tdt">';
+      	for (i = 0; i < 4; i ++) {
+      		triT += '<tr>';
+      		for (j = 0; j < 5; j ++) {
+      			triT += '<td width=64px height=64px>';
+      			if ((i == 0 && j == 2) || (i == 3 && (j == 0 || j == 4) ))  {
+      				triT += '<img class = "imageCorner" id = "ps' + identities[odd_one_cycle[odd_one_place][place_count]] + '" width=64px height=64px src="' + list_of_image_paths[sequence_order[trial_counter]][odd_one_cycle[odd_one_place][place_count]] + '">'
+      				place_count += 1;
+      			}
+      			if (i == 2 && j == 2) {
+      				triT += '<p align = "center">X</p>';
+      			}
+      			triT += '</td>';
+      		}
+      		triT += '</tr>';
+      	}
+      	triT += '</table>';
+      	$("#triangularTable").html(triT);
+
+
+      	var button_show_id = 'showImagesButton' + trial_counter;
+      	//var button_advance_id = '';
+      	//if (trial_counter + 1 < number_of_trials) {
+      	//	button_advance_id += 'trial_sequence_button' + trial_counter;
+      	//} else {
+      	//	button_advance_id += 'final_slide_button' + trial_counter;
+      	//}
+      	var button_to_show = '<button class = "buttonAttr" type="button" id="' +  button_show_id +  '" onClick="showAndHide(\'ps' + identity_of_1 + '\',250); showAndHide(\'ps' + identity_of_2 + '\', 250); showAndHide(\'ps' + identity_of_3 + '\', 250); justHide(\'' + button_show_id + '\'); ';
+      	button_to_show += 'justShow(\'tdchoice' + String(trial_counter) + '_' + String(0) +  '\'); justShow(\'tdchoice' + String(trial_counter) + '_' + String(1) +  '\'); justShow(\'tdchoice' + String(trial_counter) + '_' + String(2) +  '\'); experiment.clicked_show();">Show</button>';
 
 
       	// Dynamically create a button that either sends you to the same slide with updated
       	// picture values or, if the number of trials is reached, sends you to the end slide / or the "what was it about?" slide
-      	var button_to_advance = '';
+		var next_depending_on_trial = '';
+      	
       	if (trial_counter + 1 < number_of_trials) {
-      		button_to_advance += '<button type="button" id="trial_sequence_button" onClick="experiment.disable_next();  experiment.enable_show(); experiment.next_real_trial()">Next</button>';
+      		next_depending_on_trial += 'experiment.next_real_trial()';
       	} else {
-      		button_to_advance += '<button type="button" id="final_slide_button" onClick="experiment.disable_next(); experiment.enable_show(); experiment.final_slide()">Next</button>';
+      		next_depending_on_trial += 'experiment.final_slide()';
       	};
-      	$("#go_next_trial_button").html(button_to_advance);
+      	//$("#go_next_trial_button").html(button_to_advance);
       	//$("#go_next_trial_button").hide();
-
 
       	var  user_input_selection = '';
 		user_input_selection += '<table align="center"><tr>';
+
+
 		for (i=0;i<3;i++) {
 			user_input_selection += '<td width=98px height=50px align="center"' + 
-				' class="unchosen answerTable" ' +
+				' class="unchosen" ' +
 				'id="tdchoice' + String(trial_counter) + '_' + String(i) +  '" ' +
-				'onclick=\"experiment.select(' + String(trial_counter) + ',' + String(i) + ');\">';
+				'onclick=\"' + next_depending_on_trial + '; experiment.select(' + String(trial_counter) + ',' + String(i) + ');\">';
 			user_input_selection +=  '<br>' + number_to_name[i];
 			user_input_selection += '</td>';
 		}
-		user_input_selection += '</tr><tr>';
+		user_input_selection += '</tr>';
+		user_input_selection += '<td></td>';
+		user_input_selection += '<td>' + button_to_show + '</td>';
+		user_input_selection += '<td></td>';
+		user_input_selection +='<tr>';
 		user_input_selection += '</tr></table>';
 		$("#userSelectionInputFields").html(user_input_selection)
 
@@ -265,17 +335,19 @@ var experiment = {
 			}
 			corrected_pl = place;
 			if (place == 1){
-				corrected_pl = 2;
+				corrected_pl = 0;
 			}
-			if (place == 2) {
+			if (place == 0) {
 				corrected_pl = 1;
 			}
 			
 
     		if (corrected_pl == odd_one_position[sequence_order[trial_counter]]) {
     			correct_answers[sequence_order[trial_counter]] = 1;
+    			correct_by_trial[trial_counter - 1] = 1;
     		} else {
     			correct_answers[sequence_order[trial_counter]] = 0;
+    			correct_by_trial[trial_counter - 1] = 0;
     		}
 
 			answers_by_displayed_sequence[sequence_order[trial_counter]] = corrected_pl;
@@ -329,6 +401,10 @@ var experiment = {
 		$("#go_next_trial_button").show();
 	},
 
+	enable_next_example: function() {
+		$("#go_to_real_trial_button").show();
+	},
+
 	final_slide: function() {
 		showSlide("end_slide");
 	},
@@ -374,8 +450,30 @@ var experiment = {
        	experiment.response_37 = correct_answers[37];
     	experiment.response_38 = correct_answers[38];
     	experiment.response_39 = correct_answers[39];
+    	experiment.response_40 = correct_answers[40];
+    	experiment.response_41 = correct_answers[41];
+    	experiment.response_42 = correct_answers[42];
+    	experiment.response_43 = correct_answers[43];
+    	experiment.response_44 = correct_answers[44];
+    	experiment.response_45 = correct_answers[45];
+    	experiment.response_46 = correct_answers[46];
+       	experiment.response_47 = correct_answers[47];
+    	experiment.response_48 = correct_answers[48];
+    	experiment.response_49 = correct_answers[49];
+    	experiment.response_50 = correct_answers[50];
+    	experiment.response_51 = correct_answers[51];
+    	experiment.response_52 = correct_answers[52];
+    	experiment.response_53 = correct_answers[53];
+    	experiment.response_54 = correct_answers[54];
+    	experiment.response_55 = correct_answers[55];
+    	experiment.response_56 = correct_answers[56];
+       	experiment.response_57 = correct_answers[57];
+    	experiment.response_58 = correct_answers[58];
+    	experiment.response_59 = correct_answers[59];
 
     	experiment.total_correct = sumElements(correct_answers);
+
+    	experiment.correct_ordered_trials = correct_by_trial;
 
 	    experiment.about = document.getElementById("about").value;
 	    experiment.comment = document.getElementById("comments").value;

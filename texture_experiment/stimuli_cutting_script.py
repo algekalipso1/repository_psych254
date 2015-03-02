@@ -22,10 +22,12 @@ original_subdirectories = ["asymmetric", "structured", "pseudoperiodic"]
 synthesized_texture_directory = "/Users/andesgomez/Documents/Stanford/Winter2015/Psych254/hello/texture_experiment/images/"
 synthesized_subdirectories = ["full_set", "local_phase", "magnitude_corr", "marginals", "subband_corr"]
 
-ex_dir = os.listdir(synthesized_texture_directory + synthesized_subdirectories[0])
+remade_structured = "/Users/andesgomez/Documents/Stanford/Winter2015/Psych254/hello/texture_experiment/images/remakes/"
 
 
-ex_dir[5][:4]
+
+#ex_dir = os.listdir(synthesized_texture_directory + synthesized_subdirectories[0])
+#ex_dir[5][:4]
 
 
 
@@ -40,8 +42,19 @@ def cutImageCirlce(center, radious, base_to_cut, pixel_to_cut):
 			if (i**2 + j**2)**.5 < radious:
 				if i + center[0] < X and i + center[0] >=0 and j + center[1] < Y and j + center[1] >=0:
 					pixel_piece_out[i + radious, j + radious] = pixel_to_cut[i + center[0], j + center[1]]
-					pixel_to_cut[i + center[0], j + center[1]] = (0, 0, 0)
+					#pixel_to_cut[i + center[0], j + center[1]] = (0, 0, 0)
 	return new_piece_out, pixel_piece_out
+
+
+# I decided to drop this idea, as it creates images that are pixelated. Instead I'm shrinking the images on the other side
+# of the analysis in matlab
+def scaleImage(factor, base_to_scale, pixel_to_scale):
+	new_scaled_base = Image.new('RGB', (base_to_scale.size[0]*factor, base_to_scale.size[1]*factor))
+	new_pixels = new_scaled_base.load()
+	for i in range(base_to_scale.size[0]*factor):
+		for j in range(base_to_scale.size[1]*factor):
+			new_pixels[i, j] = pixel_to_scale[i/factor, j/factor]
+	return new_scaled_base, new_pixels
 
 
 
@@ -55,13 +68,15 @@ for subd_index in range(len(original_subdirectories)):
 	ful = os.listdir(original_texture_directory + original_subdirectories[subd_index] + "/")
 	for image_index in range(len(ful)):
 		full_name = ful[image_index]
+		if full_name == ".DS_Store":
+			continue
 		this_image = original_texture_directory + original_subdirectories[subd_index] + "/" + full_name
 		base = Image.open(this_image, 'r')
 		pixel_base = base.load()
 		X = base.size[0]
 		Y = base.size[1]
-		xCircles = X / (2*radious)
-		yCircles = Y / (2*radious)
+		xCircles = X / (radious)
+		yCircles = Y / (radious)
 		write_image = Image.new('RGB', (X, Y))
 		write_pixels = write_image.load()
 		for i in range(X):
@@ -73,9 +88,9 @@ for subd_index in range(len(original_subdirectories)):
 					write_pixels[i, j] = (values, values, values)
 		circle_pics = []
 		## go ahead and cut all the pieces you need
-		for i in range(xCircles):
-			for j in range(yCircles):
-				new_piece_out, pixel_piece_out = cutImageCirlce([i*2*radious + radious, j*2*radious + radious], radious, write_image, write_pixels)
+		for i in range(xCircles - 1):
+			for j in range(yCircles - 1):
+				new_piece_out, pixel_piece_out = cutImageCirlce([i*radious + radious, j*radious + radious], radious, write_image, write_pixels)
 				circle_pics += [new_piece_out]
 		for pic_index in range(len(circle_pics)):
 			base = circle_pics[pic_index]
@@ -91,7 +106,7 @@ for subd_index in range(len(original_subdirectories)):
 
 
 
-# Create the circular stimuli for all of the *synthetic* pictures
+# Create the circular stimuli for all of the *synthetic* pictures.
 for subd_index in range(len(synthesized_subdirectories)):
 	ful = os.listdir(synthesized_texture_directory + synthesized_subdirectories[subd_index] + "/")
 	sub_0 = 0
@@ -120,8 +135,8 @@ for subd_index in range(len(synthesized_subdirectories)):
 		pixel_base = base.load()
 		X = base.size[0]
 		Y = base.size[1]
-		xCircles = X / (2*radious)
-		yCircles = Y / (2*radious)
+		xCircles = X / (radious)
+		yCircles = Y / (radious)
 		write_image = Image.new('RGB', (X, Y))
 		write_pixels = write_image.load()
 		for i in range(X):
@@ -133,9 +148,9 @@ for subd_index in range(len(synthesized_subdirectories)):
 					write_pixels[i, j] = (values, values, values)
 		circle_pics = []
 		## go ahead and cut all the pieces you need
-		for i in range(xCircles):
-			for j in range(yCircles):
-				new_piece_out, pixel_piece_out = cutImageCirlce([i*2*radious + radious, j*2*radious + radious], radious, write_image, write_pixels)
+		for i in range(xCircles - 1):
+			for j in range(yCircles - 1):
+				new_piece_out, pixel_piece_out = cutImageCirlce([i*radious + radious, j*radious + radious], radious, write_image, write_pixels)
 				circle_pics += [new_piece_out]
 		for pic_index in range(len(circle_pics)):
 			base = circle_pics[pic_index]
@@ -146,9 +161,6 @@ for subd_index in range(len(synthesized_subdirectories)):
 
 
 
-# So far the "structured" set works really well. I don't know why 
-
-
 
 
 
@@ -157,12 +169,16 @@ for subd_index in range(len(synthesized_subdirectories)):
 
 # When you only want one picture
 
-example_picture = "33-peacock-black-whijpg_0.bmp"
+example_picture = "structured_elevator-panel_c.jpg"
 
 
 
-base = Image.open(picture_directory + example_picture, 'r')
+base = Image.open(original_texture_directory + original_subdirectories[1] + "/" + example_picture, 'r')
 pixel_base = base.load()
+
+base, pixel_image = scaleImage(4, base, pixel_base)
+pixel_base = base.load()
+
 X = base.size[0]
 Y = base.size[1]
 center = [70,70]
@@ -172,11 +188,15 @@ write_pixels = write_image.load()
 
 for i in range(X):
 	for j in range(Y):
-		write_pixels[i, j] = (pixel_base[i, j], pixel_base[i, j], pixel_base[i, j])
+		values = pixel_base[i, j]
+		if isinstance(values, tuple):
+			write_pixels[i, j] = values
+		if isinstance(values, int):
+			write_pixels[i, j] = (values, values, values)
 
 
 
-new_piece_out, pixel_piece_out = cutImageCirlce([100, 100], 100, write_image, write_pixels)
+new_piece_out, pixel_piece_out = cutImageCirlce([300, 300], 64, write_image, write_pixels)
 new_piece_out.show()
 write_image.show()
 
@@ -184,7 +204,11 @@ write_image.show()
 ## Reset the write_pixels
 for i in range(X):
 	for j in range(Y):
-		write_pixels[i, j] = (pixel_base[i, j], pixel_base[i, j], pixel_base[i, j])
+		values = pixel_base[i, j]
+		if isinstance(values, tuple):
+			write_pixels[i, j] = values
+		if isinstance(values, int):
+			write_pixels[i, j] = (values, values, values)
 
 
 xCircles = X / (2*radious)

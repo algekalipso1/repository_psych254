@@ -1,0 +1,14 @@
+1. I am still getting centering problems with the response buttons. Spend 10 more minutes trying to fix this. If you can't, I'll take a look at your code (so make sure the version on the web is up to date). It's really hard to evaluate your task right now because the centering issues really impedes performance on the task.
+
+2. I think there should be a full practice trial devoted to getting the viewing distance right. On this "viewing-setup" trial, just have three colored circles (e.g., red, green, blue) that are *always* visible, so the subject doesn't have to keep clicking the show button (which is a little exasperating)
+
+3. Vary the location of the correct answer in the practice trials.
+
+4. Your task will benefit greatly from more screen real estate, so you will want to run your task in a popup window. One setup that works is:
+- Write a preview page that simply serves to open the main task in a maximized popup window 
+- At the end of the main task, call turk.submit in the preview page using the opener variable, which references the window that opened your script. i.e., on the main task, at the end, you would call:
+opener.turk.submit(...)
+- You will also want some verbiage to the effect of "The HIT has automatically submitted for you. You will be automatically paid within 5 minutes; this HIT does not require completion codes".
+
+
+WHat about the idea that you always have some kind of space active in your visual field/sense of space. Then by accident you associate whatever it is at the time when you think about something new. And this association then is recruited to think about the idea in various ways, and cristilized degrees of freedom for that thought process.

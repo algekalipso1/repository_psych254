@@ -26,8 +26,8 @@
     
     <div class="slide" id="instructions">
       <img src="images/stanford.png" alt="Stanford University">
-      <p id='logo-text'>Stanford Psych 254 Project Replicaiton</p>
-      <p class="block-text">In this experiment, we're interested in your judgements about the similarity between visual textures. It should take less than 2 - 3 minutes. </p>
+      <p id='logo-text'>Stanford Psych 254 Project Replication</p>
+      <p class="block-text">In this experiment, we're interested in your judgements about the similarity between visual textures. It should take 5-10 minutes. </p>
       
 
       <!-- If there is a familiarization stage then the next line should be active, otherwise the one after that should be active-->
@@ -63,9 +63,10 @@
 
     
     <div class="slide" id="prestage">
-      <p class="block-text">In this experiment we will show you sets of three pictures. One of those
-      pictures will be different than the other two. In each case you will see either one or two "original textures" and one or two "synthesized textures." If there is one "original texture" then there will be two synthesized textures, and vice versa. The synthesized texture is intended to look as similar as possible to the original texture. Your task will be to identify the "odd one out" of the three (if there is one synthesized, then choose that, and if there is one original then choose that). <br> <br> 
-      You will be shown an equilateral triangle and you will have to center your vision by looking at the dot in the center of the triangle.
+      <p class="block-text">In this experiment we will show you sets of three pictures arranged in an equilateral triangle. One of the three pictures will be more different than the other two in some way. Even though the three images will look similar, one of them will be less similar than the other two. Your job is to identify the picture that is different from the other two by clicking on the corresponding button. In other words, your task will be to identify the "odd one out" in each of the trials. <br> <br> 
+      At the center of the equilateral triangle you will have a little 'X'. Stare at that center and notice the pictures in your peripheral vision. <br> <br>
+      There will be 4 example trials for you to familiarize yourself with the task, and 60 real trials that count.
+      </p>
       <!-- <img src="images/full_set/33-peacock-black-whijpg_0.bmp" width=75px alt="peacock"></p> -->
 
 
@@ -74,7 +75,7 @@
       <!-- <div id="famObjects"> </div> --><!--dynamically built in javascript-->
       
       <table align="center"><tr><td align="center">
-        <button type="button" id="goToExample" onClick="experiment.next_example_trial()">Next</button>
+        <button type="button" id="goToExample" onClick="experiment.calibration_trial()">Next</button>
         </td></tr>
         <tr><td align="center">
         <div id="famMessage"> </div>
@@ -82,36 +83,46 @@
       </table>
     </div>
     
+    <!-- Calibration trial with three circles -->
+    <div class="slide" id="calibration_trial">
+      <div class = "instruction_text" id="calibrationText"> </div>
+      <div class="trifectalCenter"> 
+        <div id = "triangularTableCalibration" class = "tdt"></div>
+      </div>
+      <div class = "responseTable">
+        <div id="selectionCalibration"> </div>
+        <div id = "show_button"> </div>
+        <div id = "go_to_real_trial_button"> </div>
+      </div>
+    </div>
+  
 
+    <!-- The familiarization slide. --> 
     <div class="slide" id="example_trial">
-      <div id="exampleText"> </div>
+      <div class = "instruction_text" id="exampleText"> </div>
       <div class="trifectalCenter"> <!--  <div align = "center">-->
-        <div class = "fixationCenter"> X </div>
-        <div id="exampleImages" > </div>
+        <div id = "triangularTableExample" class = "tdt"></div>
       </div>
       <div class = "responseTable">
         <div id="selectionExample"> </div>
         <div id = "show_button"> </div>
-      <button type="button" id="goToTrials" onClick="experiment.next_real_trial(); experiment.disable_next();">Next</button> 
+        <div id = "go_to_real_trial_button"> </div>
       </div>
     </div>
 
-
-
-      <!-- The actual trials, in sequence.--> 
+    <!-- The actual trials, in sequence.--> 
     <div class="slide" id="series_of_trials">
-      <div id="trialText"> </div>
+      <div class = "instruction_text" id="trialText"> </div>
       <br>
       <div class="trifectalCenter"> <!--  <div align = "center">-->
-        <div class = "fixationCenter"> X </div>
-        <div id="trialImages" > </div>
+        <div id = "triangularTable" class = "tdt"></div>
       </div>
       <div class = "responseTable">
-        <div id="userSelectionInputFields"> </div>
-        <div id = "show_trial_button"> </div>
-        <div id = "go_next_trial_button"> </div>
+        <div id= "userSelectionInputFields"> </div>
       </div>
     </div>
+
+
 
     <!-- End slide -->
     <div class="slide" id= "end_slide">

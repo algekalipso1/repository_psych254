@@ -80,16 +80,41 @@ function showThisImage(id) {
     img.style.visibility = 'visible';
 }
 
-function showAndHide(id) {
+function showAndHide(id, ms) {
     var img = document.getElementById(id);
     img.style.visibility = 'visible';
-    var interval = window.setInterval(function(){
+    var interval = window.setTimeout(function(){
         img.style.visibility = 'hidden';
-    }, 250);
+    }, ms);
 }
 
 
-// Here list all of the possible stimuli combinations 
+
+// For button hideouts
+
+function justHide(id) {
+    var butt = document.getElementById(id);
+    butt.style.visibility = 'hidden';
+}
+
+function justShow(id) {
+    var butt = document.getElementById(id);
+    butt.style.visibility = 'visible';
+}
+
+
+
+// The following function provides a way to "click" buttons with key presses
+
+function searchKeyPress(e)
+{
+    // look for window.event in case event isn't passed in
+    if (typeof e == 'undefined' && window.event) { e = window.event; }
+    if (e.keyCode == 13)
+    {
+        document.getElementById('showImagesButton').click();
+    }
+}
 
 
 // create HTML for property matrix and base image

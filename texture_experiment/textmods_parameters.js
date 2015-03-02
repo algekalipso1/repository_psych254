@@ -9,7 +9,7 @@ var triangle_side_pixels = 120;
 
 
 // Location of the odd one out (this should be a sequence)
-var odd_one_place = 2; // 0 is left, 1 is top, 2 is right
+var odd_one_place = 0; // 0 is top, 1 is left, 2 is right -> counter-clockwise for table convinience
 
 // Sequence of stimuli (randomized)
 
@@ -20,69 +20,107 @@ var orders_list = [["leftImage", "topImage", "rightImage"], ["rightImage", "left
 var xy_displacement = [[-triangle_side_prop/2, -0.288675*triangle_side_prop], [0, 0.57735027*triangle_side_prop], [-triangle_side_prop/2, -0.288675*triangle_side_prop]];
 
 
-// Trial counter
+// Trial counter for the example trials.
+var example_count = -1;
+
+// Trial counter for the real trials
 var trial_counter = -1;
 
-// List of filenames to use as stimuli
-// You have to decide on a reasonable structure to do this.
-// Though it is reasonable to first try to make a 1 trial settup work.
+// Type of image shown. Options
+//  'asymmetric'
+//  'pseudoperiodic'
+//  'structured'
+var image_type = "structured/";
 
+// Image path
+var impath = "images/after_script/";
+
+
+// List of filenames to use as stimuli
+// 60 trials total. 2 oddball X 5 statistical categories X 6 images ("X 3 image categories" if I was running the entire thing.)
+// Thus, each consecutive pair of even odd indexes are the two oddball conditions (2 synthetic, then 2 originals)
+// Never put consecutive stimuli numbers (like 0_0 and 0_1) because they can come from overlapping regions of the image
 // var list_of_image_paths = [
-//     ["images/experimental_names/s_5_0_0.jpg", "images/experimental_names/s_0_0_0.bmp", "images/experimental_names/s_0_0_0.bmp"],
-//     ["images/experimental_names/s_0_0_0.bmp", "images/experimental_names/s_5_0_0.jpg", "images/experimental_names/s_5_0_0.jpg"],
-//     ["images/experimental_names/s_5_1_0.jpg", "images/experimental_names/s_0_1_0.bmp", "images/experimental_names/s_0_1_0.bmp"],
-//     ["images/experimental_names/s_0_1_0.bmp", "images/experimental_names/s_5_1_0.jpg", "images/experimental_names/s_5_1_0.jpg"],
-//     ["images/experimental_names/s_5_2_0.jpg", "images/experimental_names/s_0_2_0.bmp", "images/experimental_names/s_0_2_0.bmp"],
-//     ["images/experimental_names/s_0_2_0.bmp", "images/experimental_names/s_5_2_0.jpg", "images/experimental_names/s_5_2_0.jpg"],
-//     ["images/experimental_names/s_5_3_0.jpg", "images/experimental_names/s_0_3_0.bmp", "images/experimental_names/s_0_3_0.bmp"],
-//     ["images/experimental_names/s_0_3_0.bmp", "images/experimental_names/s_5_3_0.jpg", "images/experimental_names/s_5_3_0.jpg"],
-//     ["images/experimental_names/s_5_4_0.jpg", "images/experimental_names/s_0_4_0.bmp", "images/experimental_names/s_0_4_0.bmp"],
-//     ["images/experimental_names/s_0_4_0.bmp", "images/experimental_names/s_5_4_0.jpg", "images/experimental_names/s_5_4_0.jpg"],
-//     ["images/experimental_names/s_5_5_0.jpg", "images/experimental_names/s_0_5_0.bmp", "images/experimental_names/s_0_5_0.bmp"],
-//     ["images/experimental_names/s_0_5_0.bmp", "images/experimental_names/s_5_5_0.jpg", "images/experimental_names/s_5_5_0.jpg"]
+//     [impath + image_type + "original/" + "0_5.bmp", impath + image_type + "full_set/" + "0_0.bmp", impath + image_type + "full_set/" + "0_2.bmp"],
+//     [impath + image_type + "full_set/" + "0_4.bmp", impath + image_type + "original/" + "0_1.bmp", impath + image_type + "original/" + "0_3.bmp"],
+//     [impath + image_type + "original/" + "1_0.bmp", impath + image_type + "full_set/" + "1_0.bmp", impath + image_type + "full_set/" + "1_2.bmp"],
+//     [impath + image_type + "full_set/" + "1_4.bmp", impath + image_type + "original/" + "1_5.bmp", impath + image_type + "original/" + "1_7.bmp"],
+//     [impath + image_type + "original/" + "2_4.bmp", impath + image_type + "full_set/" + "2_0.bmp", impath + image_type + "full_set/" + "2_2.bmp"],
+//     [impath + image_type + "full_set/" + "2_4.bmp", impath + image_type + "original/" + "2_6.bmp", impath + image_type + "original/" + "2_8.bmp"],
+//     [impath + image_type + "original/" + "3_3.bmp", impath + image_type + "full_set/" + "3_0.bmp", impath + image_type + "full_set/" + "3_2.bmp"],
+//     [impath + image_type + "full_set/" + "3_4.bmp", impath + image_type + "original/" + "3_5.bmp", impath + image_type + "original/" + "3_8.bmp"],
+//     [impath + image_type + "original/" + "4_6.bmp", impath + image_type + "full_set/" + "4_0.bmp", impath + image_type + "full_set/" + "4_2.bmp"],
+//     [impath + image_type + "full_set/" + "4_4.bmp", impath + image_type + "original/" + "4_0.bmp", impath + image_type + "original/" + "4_3.bmp"],
+//     [impath + image_type + "original/" + "5_7.bmp", impath + image_type + "full_set/" + "5_0.bmp", impath + image_type + "full_set/" + "5_2.bmp"],
+//     [impath + image_type + "full_set/" + "5_4.bmp", impath + image_type + "original/" + "5_4.bmp", impath + image_type + "original/" + "5_1.bmp"],
+
+//     [impath + image_type + "original/" + "0_5.bmp", impath + image_type + "local_phase/" + "0_0.bmp", impath + image_type + "local_phase/" + "0_2.bmp"],
+//     [impath + image_type + "local_phase/" + "0_4.bmp", impath + image_type + "original/" + "0_1.bmp", impath + image_type + "original/" + "0_3.bmp"],
+//     [impath + image_type + "original/" + "1_0.bmp", impath + image_type + "local_phase/" + "1_0.bmp", impath + image_type + "local_phase/" + "1_2.bmp"],
+//     [impath + image_type + "local_phase/" + "1_4.bmp", impath + image_type + "original/" + "1_5.bmp", impath + image_type + "original/" + "1_7.bmp"],
+//     [impath + image_type + "original/" + "2_4.bmp", impath + image_type + "local_phase/" + "2_0.bmp", impath + image_type + "local_phase/" + "2_2.bmp"],
+//     [impath + image_type + "local_phase/" + "2_4.bmp", impath + image_type + "original/" + "2_6.bmp", impath + image_type + "original/" + "2_8.bmp"],
+//     [impath + image_type + "original/" + "3_3.bmp", impath + image_type + "local_phase/" + "3_0.bmp", impath + image_type + "local_phase/" + "3_2.bmp"],
+//     [impath + image_type + "local_phase/" + "3_4.bmp", impath + image_type + "original/" + "3_5.bmp", impath + image_type + "original/" + "3_8.bmp"],
+//     [impath + image_type + "original/" + "4_6.bmp", impath + image_type + "local_phase/" + "4_0.bmp", impath + image_type + "local_phase/" + "4_2.bmp"],
+//     [impath + image_type + "local_phase/" + "4_4.bmp", impath + image_type + "original/" + "4_0.bmp", impath + image_type + "original/" + "4_3.bmp"],
+//     [impath + image_type + "original/" + "5_7.bmp", impath + image_type + "local_phase/" + "5_0.bmp", impath + image_type + "local_phase/" + "5_2.bmp"],
+//     [impath + image_type + "local_phase/" + "5_4.bmp", impath + image_type + "original/" + "5_4.bmp", impath + image_type + "original/" + "5_1.bmp"],
+
+//     [impath + image_type + "original/" + "0_5.bmp", impath + image_type + "magnitude_corr/" + "0_0.bmp", impath + image_type + "magnitude_corr/" + "0_2.bmp"],
+//     [impath + image_type + "magnitude_corr/" + "0_4.bmp", impath + image_type + "original/" + "0_1.bmp", impath + image_type + "original/" + "0_3.bmp"],
+//     [impath + image_type + "original/" + "1_0.bmp", impath + image_type + "magnitude_corr/" + "1_0.bmp", impath + image_type + "magnitude_corr/" + "1_2.bmp"],
+//     [impath + image_type + "magnitude_corr/" + "1_4.bmp", impath + image_type + "original/" + "1_5.bmp", impath + image_type + "original/" + "1_7.bmp"],
+//     [impath + image_type + "original/" + "2_4.bmp", impath + image_type + "magnitude_corr/" + "2_0.bmp", impath + image_type + "magnitude_corr/" + "2_2.bmp"],
+//     [impath + image_type + "magnitude_corr/" + "2_4.bmp", impath + image_type + "original/" + "2_6.bmp", impath + image_type + "original/" + "2_8.bmp"],
+//     [impath + image_type + "original/" + "3_3.bmp", impath + image_type + "magnitude_corr/" + "3_0.bmp", impath + image_type + "magnitude_corr/" + "3_2.bmp"],
+//     [impath + image_type + "magnitude_corr/" + "3_4.bmp", impath + image_type + "original/" + "3_5.bmp", impath + image_type + "original/" + "3_8.bmp"],
+//     [impath + image_type + "original/" + "4_6.bmp", impath + image_type + "magnitude_corr/" + "4_0.bmp", impath + image_type + "magnitude_corr/" + "4_2.bmp"],
+//     [impath + image_type + "magnitude_corr/" + "4_4.bmp", impath + image_type + "original/" + "4_0.bmp", impath + image_type + "original/" + "4_3.bmp"],
+//     [impath + image_type + "original/" + "5_7.bmp", impath + image_type + "magnitude_corr/" + "5_0.bmp", impath + image_type + "magnitude_corr/" + "5_2.bmp"],
+//     [impath + image_type + "magnitude_corr/" + "5_4.bmp", impath + image_type + "original/" + "5_4.bmp", impath + image_type + "original/" + "5_1.bmp"],
+
+//     [impath + image_type + "original/" + "0_5.bmp", impath + image_type + "marginals/" + "0_0.bmp", impath + image_type + "marginals/" + "0_2.bmp"],
+//     [impath + image_type + "marginals/" + "0_4.bmp", impath + image_type + "original/" + "0_1.bmp", impath + image_type + "original/" + "0_3.bmp"],
+//     [impath + image_type + "original/" + "1_0.bmp", impath + image_type + "marginals/" + "1_0.bmp", impath + image_type + "marginals/" + "1_2.bmp"],
+//     [impath + image_type + "marginals/" + "1_4.bmp", impath + image_type + "original/" + "1_5.bmp", impath + image_type + "original/" + "1_7.bmp"],
+//     [impath + image_type + "original/" + "2_4.bmp", impath + image_type + "marginals/" + "2_0.bmp", impath + image_type + "marginals/" + "2_2.bmp"],
+//     [impath + image_type + "marginals/" + "2_4.bmp", impath + image_type + "original/" + "2_6.bmp", impath + image_type + "original/" + "2_8.bmp"],
+//     [impath + image_type + "original/" + "3_3.bmp", impath + image_type + "marginals/" + "3_0.bmp", impath + image_type + "marginals/" + "3_2.bmp"],
+//     [impath + image_type + "marginals/" + "3_4.bmp", impath + image_type + "original/" + "3_5.bmp", impath + image_type + "original/" + "3_8.bmp"],
+//     [impath + image_type + "original/" + "4_6.bmp", impath + image_type + "marginals/" + "4_0.bmp", impath + image_type + "marginals/" + "4_2.bmp"],
+//     [impath + image_type + "marginals/" + "4_4.bmp", impath + image_type + "original/" + "4_0.bmp", impath + image_type + "original/" + "4_3.bmp"],
+//     [impath + image_type + "original/" + "5_7.bmp", impath + image_type + "marginals/" + "5_0.bmp", impath + image_type + "marginals/" + "5_2.bmp"],
+//     [impath + image_type + "marginals/" + "5_4.bmp", impath + image_type + "original/" + "5_4.bmp", impath + image_type + "original/" + "5_1.bmp"],
+
+//     [impath + image_type + "original/" + "0_5.bmp", impath + image_type + "subband_corr/" + "0_0.bmp", impath + image_type + "subband_corr/" + "0_2.bmp"],
+//     [impath + image_type + "subband_corr/" + "0_4.bmp", impath + image_type + "original/" + "0_1.bmp", impath + image_type + "original/" + "0_3.bmp"],
+//     [impath + image_type + "original/" + "1_0.bmp", impath + image_type + "subband_corr/" + "1_0.bmp", impath + image_type + "subband_corr/" + "1_2.bmp"],
+//     [impath + image_type + "subband_corr/" + "1_4.bmp", impath + image_type + "original/" + "1_5.bmp", impath + image_type + "original/" + "1_7.bmp"],
+//     [impath + image_type + "original/" + "2_4.bmp", impath + image_type + "subband_corr/" + "2_0.bmp", impath + image_type + "subband_corr/" + "2_2.bmp"],
+//     [impath + image_type + "subband_corr/" + "2_4.bmp", impath + image_type + "original/" + "2_6.bmp", impath + image_type + "original/" + "2_8.bmp"],
+//     [impath + image_type + "original/" + "3_3.bmp", impath + image_type + "subband_corr/" + "3_0.bmp", impath + image_type + "subband_corr/" + "3_2.bmp"],
+//     [impath + image_type + "subband_corr/" + "3_4.bmp", impath + image_type + "original/" + "3_5.bmp", impath + image_type + "original/" + "3_8.bmp"],
+//     [impath + image_type + "original/" + "4_6.bmp", impath + image_type + "subband_corr/" + "4_0.bmp", impath + image_type + "subband_corr/" + "4_2.bmp"],
+//     [impath + image_type + "subband_corr/" + "4_4.bmp", impath + image_type + "original/" + "4_0.bmp", impath + image_type + "original/" + "4_3.bmp"],
+//     [impath + image_type + "original/" + "5_7.bmp", impath + image_type + "subband_corr/" + "5_0.bmp", impath + image_type + "subband_corr/" + "5_2.bmp"],
+//     [impath + image_type + "subband_corr/" + "5_4.bmp", impath + image_type + "original/" + "5_4.bmp", impath + image_type + "original/" + "5_1.bmp"]
 //     ];
 
+
 var list_of_image_paths = [
-    ["images/after_script/structured/original/1_2.bmp", "images/after_script/structured/full_set/1_0.bmp", "images/after_script/structured/full_set/1_1.bmp"],
-    ["images/after_script/structured/original/1_3.bmp", "images/after_script/structured/full_set/1_2.bmp", "images/after_script/structured/full_set/1_3.bmp"],
-    ["images/after_script/structured/original/2_0.bmp", "images/after_script/structured/full_set/2_0.bmp", "images/after_script/structured/full_set/2_1.bmp"],
-    ["images/after_script/structured/original/2_3.bmp", "images/after_script/structured/full_set/2_2.bmp", "images/after_script/structured/full_set/2_3.bmp"],
-    ["images/after_script/structured/original/1_3.bmp", "images/after_script/structured/local_phase/1_0.bmp", "images/after_script/structured/local_phase/1_1.bmp"],
-    ["images/after_script/structured/original/1_2.bmp", "images/after_script/structured/local_phase/1_2.bmp", "images/after_script/structured/local_phase/1_3.bmp"],
-    ["images/after_script/structured/original/2_3.bmp", "images/after_script/structured/local_phase/2_0.bmp", "images/after_script/structured/local_phase/2_1.bmp"],
-    ["images/after_script/structured/original/2_3.bmp", "images/after_script/structured/local_phase/2_2.bmp", "images/after_script/structured/local_phase/2_3.bmp"],
-    ["images/after_script/structured/original/1_0.bmp", "images/after_script/structured/magnitude_corr/1_0.bmp", "images/after_script/structured/magnitude_corr/1_1.bmp"],
-    ["images/after_script/structured/original/1_2.bmp", "images/after_script/structured/magnitude_corr/1_2.bmp", "images/after_script/structured/magnitude_corr/1_3.bmp"],
-    ["images/after_script/structured/original/2_0.bmp", "images/after_script/structured/magnitude_corr/2_0.bmp", "images/after_script/structured/magnitude_corr/2_1.bmp"],
-    ["images/after_script/structured/original/2_3.bmp", "images/after_script/structured/magnitude_corr/2_2.bmp", "images/after_script/structured/magnitude_corr/2_3.bmp"],
-    ["images/after_script/structured/original/1_0.bmp", "images/after_script/structured/marginals/1_0.bmp", "images/after_script/structured/marginals/1_1.bmp"],
-    ["images/after_script/structured/original/1_0.bmp", "images/after_script/structured/marginals/1_2.bmp", "images/after_script/structured/marginals/1_3.bmp"],
-    ["images/after_script/structured/original/2_3.bmp", "images/after_script/structured/marginals/2_0.bmp", "images/after_script/structured/marginals/2_1.bmp"],
-    ["images/after_script/structured/original/2_0.bmp", "images/after_script/structured/marginals/2_2.bmp", "images/after_script/structured/marginals/2_3.bmp"],
-    ["images/after_script/structured/original/1_0.bmp", "images/after_script/structured/subband_corr/1_0.bmp", "images/after_script/structured/subband_corr/1_1.bmp"],
-    ["images/after_script/structured/original/1_2.bmp", "images/after_script/structured/subband_corr/1_2.bmp", "images/after_script/structured/subband_corr/1_3.bmp"],
-    ["images/after_script/structured/original/2_0.bmp", "images/after_script/structured/subband_corr/2_0.bmp", "images/after_script/structured/subband_corr/2_1.bmp"],
-    ["images/after_script/structured/original/2_3.bmp", "images/after_script/structured/subband_corr/2_2.bmp", "images/after_script/structured/subband_corr/2_3.bmp"],
-    ["images/after_script/pseudoperiodic/original/4_0.bmp", "images/after_script/pseudoperiodic/full_set/4_0.bmp", "images/after_script/pseudoperiodic/full_set/4_1.bmp"],
-    ["images/after_script/pseudoperiodic/original/4_3.bmp", "images/after_script/pseudoperiodic/full_set/4_2.bmp", "images/after_script/pseudoperiodic/full_set/4_3.bmp"],
-    ["images/after_script/pseudoperiodic/original/4_0.bmp", "images/after_script/pseudoperiodic/local_phase/4_0.bmp", "images/after_script/pseudoperiodic/local_phase/4_1.bmp"],
-    ["images/after_script/pseudoperiodic/original/4_3.bmp", "images/after_script/pseudoperiodic/local_phase/4_2.bmp", "images/after_script/pseudoperiodic/local_phase/4_3.bmp"],
-    ["images/after_script/pseudoperiodic/original/4_0.bmp", "images/after_script/pseudoperiodic/magnitude_corr/4_0.bmp", "images/after_script/pseudoperiodic/magnitude_corr/4_1.bmp"],
-    ["images/after_script/pseudoperiodic/original/4_3.bmp", "images/after_script/pseudoperiodic/magnitude_corr/4_2.bmp", "images/after_script/pseudoperiodic/magnitude_corr/4_3.bmp"],
-    ["images/after_script/pseudoperiodic/original/4_0.bmp", "images/after_script/pseudoperiodic/marginals/4_0.bmp", "images/after_script/pseudoperiodic/marginals/4_1.bmp"],
-    ["images/after_script/pseudoperiodic/original/4_2.bmp", "images/after_script/pseudoperiodic/marginals/4_2.bmp", "images/after_script/pseudoperiodic/marginals/4_3.bmp"],
-    ["images/after_script/pseudoperiodic/original/4_0.bmp", "images/after_script/pseudoperiodic/subband_corr/4_0.bmp", "images/after_script/pseudoperiodic/subband_corr/4_1.bmp"],
-    ["images/after_script/pseudoperiodic/original/4_2.bmp", "images/after_script/pseudoperiodic/subband_corr/4_2.bmp", "images/after_script/pseudoperiodic/subband_corr/4_3.bmp"],
-    ["images/after_script/pseudoperiodic/original/1_0.bmp", "images/after_script/pseudoperiodic/full_set/1_0.bmp", "images/after_script/pseudoperiodic/full_set/1_1.bmp"],
-    ["images/after_script/pseudoperiodic/original/1_2.bmp", "images/after_script/pseudoperiodic/full_set/1_2.bmp", "images/after_script/pseudoperiodic/full_set/1_3.bmp"],
-    ["images/after_script/pseudoperiodic/original/1_0.bmp", "images/after_script/pseudoperiodic/local_phase/1_0.bmp", "images/after_script/pseudoperiodic/local_phase/1_1.bmp"],
-    ["images/after_script/pseudoperiodic/original/1_3.bmp", "images/after_script/pseudoperiodic/local_phase/1_2.bmp", "images/after_script/pseudoperiodic/local_phase/1_3.bmp"],
-    ["images/after_script/pseudoperiodic/original/1_0.bmp", "images/after_script/pseudoperiodic/magnitude_corr/1_0.bmp", "images/after_script/pseudoperiodic/magnitude_corr/1_1.bmp"],
-    ["images/after_script/pseudoperiodic/original/1_2.bmp", "images/after_script/pseudoperiodic/magnitude_corr/1_2.bmp", "images/after_script/pseudoperiodic/magnitude_corr/1_3.bmp"],
-    ["images/after_script/pseudoperiodic/original/1_0.bmp", "images/after_script/pseudoperiodic/marginals/1_0.bmp", "images/after_script/pseudoperiodic/marginals/1_1.bmp"],
-    ["images/after_script/pseudoperiodic/original/1_3.bmp", "images/after_script/pseudoperiodic/marginals/1_2.bmp", "images/after_script/pseudoperiodic/marginals/1_3.bmp"],
-    ["images/after_script/pseudoperiodic/original/1_0.bmp", "images/after_script/pseudoperiodic/subband_corr/1_0.bmp", "images/after_script/pseudoperiodic/subband_corr/1_1.bmp"],
-    ["images/after_script/pseudoperiodic/original/1_2.bmp", "images/after_script/pseudoperiodic/subband_corr/1_2.bmp", "images/after_script/pseudoperiodic/subband_corr/1_3.bmp"]
+    [impath + image_type + "original/" + "0_5.bmp", impath + image_type + "full_set/" + "0_0.bmp", impath + image_type + "full_set/" + "0_2.bmp"],
+    [impath + image_type + "full_set/" + "0_4.bmp", impath + image_type + "original/" + "0_1.bmp", impath + image_type + "original/" + "0_3.bmp"],
+    [impath + image_type + "original/" + "1_0.bmp", impath + image_type + "full_set/" + "1_0.bmp", impath + image_type + "full_set/" + "1_2.bmp"],
+    [impath + image_type + "full_set/" + "1_4.bmp", impath + image_type + "original/" + "1_5.bmp", impath + image_type + "original/" + "1_7.bmp"],
+    [impath + image_type + "original/" + "2_4.bmp", impath + image_type + "full_set/" + "2_0.bmp", impath + image_type + "full_set/" + "2_2.bmp"],
+    [impath + image_type + "full_set/" + "2_4.bmp", impath + image_type + "original/" + "2_6.bmp", impath + image_type + "original/" + "2_8.bmp"],
+    [impath + image_type + "original/" + "3_3.bmp", impath + image_type + "full_set/" + "3_0.bmp", impath + image_type + "full_set/" + "3_2.bmp"],
+    [impath + image_type + "full_set/" + "3_4.bmp", impath + image_type + "original/" + "3_5.bmp", impath + image_type + "original/" + "3_8.bmp"],
+    [impath + image_type + "original/" + "4_6.bmp", impath + image_type + "full_set/" + "4_0.bmp", impath + image_type + "full_set/" + "4_2.bmp"],
+    [impath + image_type + "full_set/" + "4_4.bmp", impath + image_type + "original/" + "4_0.bmp", impath + image_type + "original/" + "4_3.bmp"],
+    [impath + image_type + "original/" + "5_7.bmp", impath + image_type + "full_set/" + "5_0.bmp", impath + image_type + "full_set/" + "5_2.bmp"],
+    [impath + image_type + "full_set/" + "5_4.bmp", impath + image_type + "original/" + "5_4.bmp", impath + image_type + "original/" + "5_1.bmp"]
     ];
 
 
@@ -95,12 +133,25 @@ var list_of_image_paths = [
 //     ["images/after_script/structured/original/1_1.bmp", "images/after_script/structured/local_phase/1_2.bmp", "images/after_script/structured/local_phase/1_3.bmp"]
 //     ];
 
+
+// Exmaple trials image paths
+var image_sources_for_example = [
+    ["images/after_script/pseudoperiodic/original/4_0.bmp", "images/after_script/pseudoperiodic/full_set/4_0.bmp", "images/after_script/pseudoperiodic/full_set/4_1.bmp"],
+    ["images/after_script/pseudoperiodic/original/4_0.bmp", "images/after_script/pseudoperiodic/full_set/4_0.bmp", "images/after_script/pseudoperiodic/full_set/4_1.bmp"],
+    ["images/after_script/pseudoperiodic/original/2_0.bmp", "images/after_script/pseudoperiodic/full_set/2_0.bmp", "images/after_script/pseudoperiodic/full_set/2_5.bmp"],
+    ["images/after_script/asymmetric/full_set/4_0.bmp", "images/after_script/asymmetric/original/4_0.bmp", "images/after_script/asymmetric/original/4_0.bmp"]
+    ];
+
+
+var calibration_images = ["images/after_script/calibration/r.bmp", "images/after_script/calibration/g.bmp", "images/after_script/calibration/b.bmp"];
+
 // Total number of trials
 var number_of_trials = list_of_image_paths.length;
 
 // Record of positions
 var odd_one_position = [];
 for (var i = 0; i < number_of_trials; i++) {
+    odd_one_position.push(0);
     odd_one_position.push(random(0,2));
 }
 
@@ -122,6 +173,18 @@ var correct_answers = [];
 for (var i = 0; i < number_of_trials; i++) {
     correct_answers.push(0);
 }
+
+// Correct answers by number trial number
+var correct_by_trial = [];
+for (var i = 0; i < number_of_trials; i++) {
+    correct_by_trial.push(-1);
+}
+
+var odd_one_cycle = [
+    [0, 1, 2],
+    [2, 0, 1],
+    [1, 2, 0]
+    ];
 
 var example_choice = -1;
 
