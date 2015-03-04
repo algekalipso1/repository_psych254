@@ -151,7 +151,6 @@ var number_of_trials = list_of_image_paths.length;
 // Record of positions
 var odd_one_position = [];
 for (var i = 0; i < number_of_trials; i++) {
-    odd_one_position.push(0);
     odd_one_position.push(random(0,2));
 }
 
@@ -171,7 +170,7 @@ sequence_order = shuffle(sequence_order);
 // Tracks the correct odd one outs
 var correct_answers = [];
 for (var i = 0; i < number_of_trials; i++) {
-    correct_answers.push(0);
+    correct_answers.push(-1);
 }
 
 // Correct answers by number trial number
@@ -180,13 +179,36 @@ for (var i = 0; i < number_of_trials; i++) {
     correct_by_trial.push(-1);
 }
 
+// Position by trial
+var position_by_trial = [];
+for (var i = 0; i < number_of_trials; i++) {
+    position_by_trial.push(-1);
+}
+
+// Position of the odd one by trial
+odd_one_pos_by_trial = [];
+for (var i = 0; i < number_of_trials; i++) {
+    odd_one_pos_by_trial.push(odd_one_position[sequence_order[i]]);
+}
+
 var odd_one_cycle = [
     [0, 1, 2],
     [2, 0, 1],
     [1, 2, 0]
     ];
 
+var example_positions = [
+    [0, 1, 2],
+    [2, 1, 0],
+    [1, 2, 0],
+    [1, 0, 2]
+    ];
+
+var example_odd_one = ["top", "right", "right", "left"];
+
 var example_choice = -1;
 
 var has_clicked_show = 0;
+
+var example_user_choices = [-1, -1, -1, -1];
 

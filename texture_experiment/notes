@@ -11,4 +11,7 @@ opener.turk.submit(...)
 - You will also want some verbiage to the effect of "The HIT has automatically submitted for you. You will be automatically paid within 5 minutes; this HIT does not require completion codes".
 
 
-WHat about the idea that you always have some kind of space active in your visual field/sense of space. Then by accident you associate whatever it is at the time when you think about something new. And this association then is recruited to think about the idea in various ways, and cristilized degrees of freedom for that thought process.
+WHat about the idea that you always have some kind of space active in your visual field/sense of space. Then by accident you associate whatever it is at the time when you think about something new. And this association then is recruited to think about the idea in various ways, and cristilized degrees of freedom for that thought process.window.
+
+window.open('task.html')
+opener.turk.submit

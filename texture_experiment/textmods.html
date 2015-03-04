@@ -31,7 +31,7 @@
       
 
       <!-- If there is a familiarization stage then the next line should be active, otherwise the one after that should be active-->
-      <button type="button" onClick="this.blur(); experiment.next_description()">Start</button>
+      <button type="button" onClick="this.blur(); opener_functions.next_description()">Start</button>
       
 
       <!-- <button type="button" onClick="this.blur(); experiment.next_test()">Start</button> -->
@@ -75,88 +75,23 @@
       <!-- <div id="famObjects"> </div> --><!--dynamically built in javascript-->
       
       <table align="center"><tr><td align="center">
-        <button type="button" id="goToExample" onClick="experiment.calibration_trial()">Next</button>
+        <button type="button" id="goToExample" onClick="opener_functions.last_of_opener(); window.open('task.html')">Next</button>
+        <!-- <button type="button" id="goToExample" onClick="experiment.calibration_trial()">Next</button> -->
         </td></tr>
         <tr><td align="center">
         <div id="famMessage"> </div>
         </td></tr>
       </table>
     </div>
-    
-    <!-- Calibration trial with three circles -->
-    <div class="slide" id="calibration_trial">
-      <div class = "instruction_text" id="calibrationText"> </div>
-      <div class="trifectalCenter"> 
-        <div id = "triangularTableCalibration" class = "tdt"></div>
-      </div>
-      <div class = "responseTable">
-        <div id="selectionCalibration"> </div>
-        <div id = "show_button"> </div>
-        <div id = "go_to_real_trial_button"> </div>
-      </div>
-    </div>
-  
 
-    <!-- The familiarization slide. --> 
-    <div class="slide" id="example_trial">
-      <div class = "instruction_text" id="exampleText"> </div>
-      <div class="trifectalCenter"> <!--  <div align = "center">-->
-        <div id = "triangularTableExample" class = "tdt"></div>
-      </div>
-      <div class = "responseTable">
-        <div id="selectionExample"> </div>
-        <div id = "show_button"> </div>
-        <div id = "go_to_real_trial_button"> </div>
-      </div>
-    </div>
-
-    <!-- The actual trials, in sequence.--> 
-    <div class="slide" id="series_of_trials">
-      <div class = "instruction_text" id="trialText"> </div>
-      <br>
-      <div class="trifectalCenter"> <!--  <div align = "center">-->
-        <div id = "triangularTable" class = "tdt"></div>
-      </div>
-      <div class = "responseTable">
-        <div id= "userSelectionInputFields"> </div>
-      </div>
-    </div>
-
-
-
-    <!-- End slide -->
-    <div class="slide" id= "end_slide">
-      <p class="simple_text"> Optional: </p>
-      <p class="block-text">
-        What was this survey about? : <br>
-        <input type="text" id="about" name="about" size="70"> 
-      </p>
-      <p class="block-text" name="comments" >
-        Any other comments for us? : <br>
-        <input type="text" id="comments" name="comments" size="70"> 
-      </p>
-      <p class="block-text" name="age" >
-        How old are you? (optional): <br>
-        <input type="text" id="age" name="age" size="70"> 
-      </p>
-      <p class="block-text" name="gender" >
-        What is your gender? (m = male, f = female, o = other; optional): <br>
-        <input type="text" id="gender" name="gender" size="70"> 
-      </p>
-      <button type="button" id="send_to_turk" onClick="experiment.check_finished();">Submit</button> 
-    </div>
-
-    <div class="slide" id="finished">
-      <p class="block-text">
-        You're finished - thanks for participating! Submitting to Mechanical Turk...
+    <div class ="slide" id = "openerLast">
+      <p class="block-text"> Complete the task in the opened window. When you click subit there you will automatically have submitted to Mechanical Turk. No need to do anything after that.
       </p>
     </div>
+
 
     <script src="textmods_helper_functions.js"></script>
-
-    <script src="textmods_parameters.js"></script>
-
-    <script src="textmods_controlflow.js"></script>
+    <script src="opener_js.js"></script>
     
   </body>
 </html>

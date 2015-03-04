@@ -10,7 +10,7 @@ number_to_name[1] = 'Top';
 number_to_name[2] = 'Right';
 
 
-showSlide("instructions");
+
 
 // The main experiment:
 //		The variable/object 'experiment' has two distinct but interrelated components:
@@ -18,67 +18,8 @@ showSlide("instructions");
 //		2) It hall all the functions that change the visual aspect of the experiment such as showing images, etc.
 
 var experiment = {
-	response_0: -1,
-	response_1: -1,
-	response_2: -1,
-	response_3: -1,	
-	response_4: -1,
-	response_5: -1,
-	response_6: -1,
-	response_7: -1,
-	response_8: -1,
-	response_9: -1,
-	response_10: -1,
-	response_11: -1,
-	response_12: -1,
-	response_13: -1,	
-	response_14: -1,
-	response_15: -1,
-	response_16: -1,
-	response_17: -1,
-	response_18: -1,
-	response_19: -1,
-	response_20: -1,
-	response_21: -1,
-	response_22: -1,
-	response_23: -1,	
-	response_24: -1,
-	response_25: -1,
-	response_26: -1,
-	response_27: -1,
-	response_28: -1,
-	response_29: -1,
-	response_30: -1,
-	response_31: -1,
-	response_32: -1,
-	response_33: -1,	
-	response_34: -1,
-	response_35: -1,
-	response_36: -1,
-	response_37: -1,
-	response_38: -1,
-	response_39: -1,
-	response_40: -1,
-	response_41: -1,
-	response_42: -1,
-	response_43: -1,	
-	response_44: -1,
-	response_45: -1,
-	response_46: -1,
-	response_47: -1,
-	response_48: -1,
-	response_49: -1,
-	response_50: -1,
-	response_51: -1,
-	response_52: -1,
-	response_53: -1,	
-	response_54: -1,
-	response_55: -1,
-	response_56: -1,
-	response_57: -1,
-	response_58: -1,
-	response_59: -1,
 
+	responses: correct_answers,
 	total_left:0,
 	total_top:0,
 	total_right:0,
@@ -86,6 +27,14 @@ var experiment = {
 	total_correct:0,
 
 	correct_ordered_trials: correct_by_trial,
+
+    position_chosen_trial: position_by_trial,
+
+    odd_one_pos: odd_one_pos_by_trial,
+
+    // For the 4 example trials
+    example_chosen_positions: example_user_choices,
+
 
 	// Free form text given by the participant
 	about: "",
@@ -106,12 +55,12 @@ var experiment = {
 
 	calibration_trial: function() {
 		var example_text_explanation = "Calibration.<br> <br>";
-		example_text_explanation += " To standarize the angle of vision please extend your right arm while sticking your thumb up.";
-		example_text_explanation += " Then place your thumbnail between your right eye and the blue circle (bottom right). Close your left eye and look at your thumbnail with your right eye.";
-		example_text_explanation += " If your thumbnail fully covers the circle when you touch the screen with your thumb then stay there. If your thumbnail's width is smaller than the circle's diameter, then move away from the screen (and maintain";
-		example_text_explanation +=	" the alignment between your right eye, your thumbnail and the circle) until your thumbnail just prevents you from seeing the blue circle.";
-		example_text_explanation += " That is, stop at the point where your thumb perfectly covers the circle. Then stay at that distance from the computer for all of the following trials.";
-		example_text_explanation += " Click the next button to start the example trials.";
+		example_text_explanation += " Please extend your right arm while sticking your thumb up.";
+		example_text_explanation += " Close your left eye and place your thumbnail between your right eye and the bottom-right circle.";
+		example_text_explanation += " Stay where you are if your thumbnail fully covers the circle when you touch the screen. If your thumbnail is smaller than the circle's diameter, then move away from the screen";
+		example_text_explanation +=	" until your thumbnail just covers the blue circle.";
+		example_text_explanation += " Then stay at that distance from your computer for the duration of this experiment.";
+		example_text_explanation += " Click next.";
       	$("#calibrationText").html(example_text_explanation);
       	var place_count = 0;
       	var triT = '<table id = "example_table" class = "tdt">';
@@ -162,14 +111,14 @@ var experiment = {
 		example_count += 1;
 		var example_text_explanation = "Example trial #" + String(example_count + 1) + ".<br><br>";
 		if (example_count < 3) {
-			example_text_explanation += "Instructions: You will choose the odd one out by clicking in the corresponding button. In the real trials you have to center your vision in the X at the center of the screen. <br><br> "
-			example_text_explanation += " You can click the 'show' button several times during these 4 example trials. For the first three example trials, the pictures will appear for 2 seconds so you can familiarize yourself with the differences between the pictures.";
-			example_text_explanation += " In the 4th example trial the pictures will be displayed for only a quarter of a second (250 miliseconds). That will be the presentation time for all of the subsequent trials. Notice that the correct";
-			example_text_explanation += " answer is the top image. In the real trials the odd one out can be in any position with equal probability. <br> <br> To advance, simply click on one of the options.";
+			example_text_explanation += "Instructions: You will choose the odd one out by clicking in the corresponding button. Center your vision in the X at the center of the screen. <br><br> "
+			example_text_explanation += " Click the 'show' button several times to see the images. For the first three example trials, the pictures will appear for 2 seconds so you notice the differences between the pictures.";
+			example_text_explanation += " In the 4th example trial and the rest of the experiment the pictures will be displayed for 250 miliseconds.";
+			example_text_explanation += " Note: The correct answer for this example is the " + example_odd_one[example_count] +  " image.";
 		}
 		if (example_count == 3) {
 			example_text_explanation += "This is the last example trial. Feel free to click the show button several times. Now the display time is 250 milliseconds, the same as that for the real trials.";
-			example_text_explanation += " Note: The correct answer for this example is the top image.";
+			example_text_explanation += " Note: The correct answer for this example is the " + example_odd_one[example_count] +  " image.";
 		}
       	$("#exampleText").html(example_text_explanation);
 
@@ -180,7 +129,7 @@ var experiment = {
       		for (j = 0; j < 5; j ++) {
       			triT += '<td width=64px height=64px>';
       			if ((i == 0 && j == 2) || (i == 3 && (j == 0 || j == 4) ))  {
-      				triT += '<img class = "imageCorner" id = "ps' + String(odd_one_cycle[odd_one_place][place_count] + 1) + '" width=64px height=64px src="' + image_sources_for_example[example_count][odd_one_cycle[odd_one_place][place_count]] + '">'
+      				triT += '<img class = "imageCorner" id = "ps' + String(example_positions[example_count][odd_one_cycle[odd_one_place][place_count]] + 1) + '" width=64px height=64px src="' + image_sources_for_example[example_count][example_positions[example_count][odd_one_cycle[odd_one_place][place_count]]] + '">'
       				place_count += 1;
       			}
       			if (i == 2 && j == 2) {
@@ -215,7 +164,7 @@ var experiment = {
 			user_input_selection += '<td width=98px height=50px align="center"' + 
 				' class="unchosen" ' +
 				'id="exampleChoice' + String(i) + '_'  + String(example_count) + '" ' +
-				'onclick=\"' + next_depending_on_trial + '; experiment.select(' + String(-1) + ',' + String(i) + ');\">';
+				'onclick=\"' + next_depending_on_trial + '; experiment.example_select(' + String(example_count) + ',' + String(i) + ');\">';
 			user_input_selection +=  '<br>' + number_to_name[i];
 			user_input_selection += '</td>';
 		}
@@ -275,7 +224,7 @@ var experiment = {
       	//} else {
       	//	button_advance_id += 'final_slide_button' + trial_counter;
       	//}
-      	var button_to_show = '<button class = "buttonAttr" type="button" id="' +  button_show_id +  '" onClick="showAndHide(\'ps' + identity_of_1 + '\',250); showAndHide(\'ps' + identity_of_2 + '\', 250); showAndHide(\'ps' + identity_of_3 + '\', 250); justHide(\'' + button_show_id + '\'); ';
+      	var button_to_show = '<button class = "buttonAttr" type="button" id="' +  button_show_id +  '" onClick="showAndHide(\'ps' + identity_of_1 + '\',1250); showAndHide(\'ps' + identity_of_2 + '\', 1250); showAndHide(\'ps' + identity_of_3 + '\', 1250); justHide(\'' + button_show_id + '\'); ';
       	button_to_show += 'justShow(\'tdchoice' + String(trial_counter) + '_' + String(0) +  '\'); justShow(\'tdchoice' + String(trial_counter) + '_' + String(1) +  '\'); justShow(\'tdchoice' + String(trial_counter) + '_' + String(2) +  '\'); experiment.clicked_show();">Show</button>';
 
 
@@ -340,17 +289,19 @@ var experiment = {
 			if (place == 0) {
 				corrected_pl = 1;
 			}
+
+			position_by_trial[trialc] = corrected_pl;
 			
 
-    		if (corrected_pl == odd_one_position[sequence_order[trial_counter]]) {
-    			correct_answers[sequence_order[trial_counter]] = 1;
-    			correct_by_trial[trial_counter - 1] = 1;
+    		if (corrected_pl == odd_one_position[sequence_order[trialc]]) {
+    			correct_answers[sequence_order[trialc]] = 1;
+    			correct_by_trial[trialc] = 1;
     		} else {
-    			correct_answers[sequence_order[trial_counter]] = 0;
-    			correct_by_trial[trial_counter - 1] = 0;
+    			correct_answers[sequence_order[trialc]] = 0;
+    			correct_by_trial[trialc] = 0;
     		}
 
-			answers_by_displayed_sequence[sequence_order[trial_counter]] = corrected_pl;
+			answers_by_displayed_sequence[sequence_order[trialc]] = corrected_pl;
 			var coded_seq = String(trialc) + "_";
 			coded_seq += String(place);
 			var choice_button = "#tdchoice" + coded_seq;		
@@ -375,6 +326,17 @@ var experiment = {
 		if (has_clicked_show == 1) {
 			$("#go_next_trial_button").show();
 		}
+	},
+
+	example_select: function(c, i){
+		corrected_pl = i;
+		if (i == 1){
+			corrected_pl = 0;
+		}
+		if (i == 0) {
+			corrected_pl = 1;
+		}
+		example_user_choices[c] = corrected_pl;
 	},
 
 	clicked_show: function() {
@@ -410,70 +372,14 @@ var experiment = {
 	},
 
     check_finished: function() {
-    	experiment.response_0 = correct_answers[0];
-    	experiment.response_1 = correct_answers[1];
-    	experiment.response_2 = correct_answers[2];
-    	experiment.response_3 = correct_answers[3];
-    	experiment.response_4 = correct_answers[4];
-    	experiment.response_5 = correct_answers[5];
-    	experiment.response_6 = correct_answers[6];
-       	experiment.response_7 = correct_answers[7];
-    	experiment.response_8 = correct_answers[8];
-    	experiment.response_9 = correct_answers[9];
-    	experiment.response_10 = correct_answers[10];
-    	experiment.response_11 = correct_answers[11];
-    	experiment.response_12 = correct_answers[12];
-    	experiment.response_13 = correct_answers[13];
-    	experiment.response_14 = correct_answers[14];
-    	experiment.response_15 = correct_answers[15];
-    	experiment.response_16 = correct_answers[16];
-       	experiment.response_17 = correct_answers[17];
-    	experiment.response_18 = correct_answers[18];
-    	experiment.response_19 = correct_answers[19];
-    	experiment.response_20 = correct_answers[20];
-    	experiment.response_21 = correct_answers[21];
-    	experiment.response_22 = correct_answers[22];
-    	experiment.response_23 = correct_answers[23];
-    	experiment.response_24 = correct_answers[24];
-    	experiment.response_25 = correct_answers[25];
-    	experiment.response_26 = correct_answers[26];
-       	experiment.response_27 = correct_answers[27];
-    	experiment.response_28 = correct_answers[28];
-    	experiment.response_29 = correct_answers[29];
-    	experiment.response_30 = correct_answers[30];
-    	experiment.response_31 = correct_answers[31];
-    	experiment.response_32 = correct_answers[32];
-    	experiment.response_33 = correct_answers[33];
-    	experiment.response_34 = correct_answers[34];
-    	experiment.response_35 = correct_answers[35];
-    	experiment.response_36 = correct_answers[36];
-       	experiment.response_37 = correct_answers[37];
-    	experiment.response_38 = correct_answers[38];
-    	experiment.response_39 = correct_answers[39];
-    	experiment.response_40 = correct_answers[40];
-    	experiment.response_41 = correct_answers[41];
-    	experiment.response_42 = correct_answers[42];
-    	experiment.response_43 = correct_answers[43];
-    	experiment.response_44 = correct_answers[44];
-    	experiment.response_45 = correct_answers[45];
-    	experiment.response_46 = correct_answers[46];
-       	experiment.response_47 = correct_answers[47];
-    	experiment.response_48 = correct_answers[48];
-    	experiment.response_49 = correct_answers[49];
-    	experiment.response_50 = correct_answers[50];
-    	experiment.response_51 = correct_answers[51];
-    	experiment.response_52 = correct_answers[52];
-    	experiment.response_53 = correct_answers[53];
-    	experiment.response_54 = correct_answers[54];
-    	experiment.response_55 = correct_answers[55];
-    	experiment.response_56 = correct_answers[56];
-       	experiment.response_57 = correct_answers[57];
-    	experiment.response_58 = correct_answers[58];
-    	experiment.response_59 = correct_answers[59];
+    	experiment.responses = correct_answers;
 
     	experiment.total_correct = sumElements(correct_answers);
 
     	experiment.correct_ordered_trials = correct_by_trial;
+
+    	experiment.position_chosen_trial = position_by_trial;
+    	experiment.example_chosen_positions = example_user_choices;
 
 	    experiment.about = document.getElementById("about").value;
 	    experiment.comment = document.getElementById("comments").value;
@@ -487,12 +393,12 @@ var experiment = {
     end: function () {
     	showSlide("finished");
     	setTimeout(function () {
-		turk.submit(experiment);
+		opener.turk.submit(experiment);
         }, 500); 
     }
 }
 
 
 
-
+experiment.calibration_trial();
 
