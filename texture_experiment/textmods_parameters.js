@@ -36,6 +36,9 @@ var image_type = "structured/";
 var impath = "images/after_script/";
 
 
+// Time of presentation for the main task
+var presentation_time = 250;
+
 // List of filenames to use as stimuli
 // 60 trials total. 2 oddball X 5 statistical categories X 6 images ("X 3 image categories" if I was running the entire thing.)
 // Thus, each consecutive pair of even odd indexes are the two oddball conditions (2 synthetic, then 2 originals)

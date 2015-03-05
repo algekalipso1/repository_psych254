@@ -180,6 +180,10 @@ p.simpleText {
   visibility: hidden;
 }
 
+.centeringCross {
+  visibility: visible;
+}
+
 
 
 /**

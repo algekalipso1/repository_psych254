@@ -1,0 +1,53 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%% What you do and in what order %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Use command line to get to the path your pragmods file is saved in.
+	
+	0) If necessary set the Java stuff:
+
+export JAVA_HOME=/Library/Java/Home
+
+	1) Add to the experiment_timeline doc what you will do
+
+	2) change the variables in textmods_parameters.js
+
+	3) change the variables in settings.txt
+
+	4) Run the submiterator
+
+python submiterator.py settings.txt
+
+	5) Update the code online - Go to the folder experiments and do the following there:
+
+	### Updating All ### (or just part, if you want)
+scp -r * SUNERID@cardinal.stanford.edu:/afs/ir/group/langcog/WWW/expts/pragmods
+scp * SUNETID@cardinal.stanford.edu:/afs/ir/group/langcog/WWW/expts/pragmods
+
+	In your case, use Fetch rather than scp, for safety reasons
+scp -r * nc07agom@cardinal.stanford.edu:/afs/ir/group/langcog/WWW/expts/pragmods
+
+
+
+	## If you only changed that one file, then:
+scp textmods_parameters.js nc07agom@cardinal.stanford.edu:/afs/ir/group/langcog/WWW/expts/pragmods
+
+
+	6) Post the HIT
+
+sh textmods-postHIT.sh
+
+	7) Retreive the results
+
+sh textmods-getResults.sh
+
+	8) Add to experiment timeline the info you get. 
+
+	9) Take textmods.results.tsv and make a copy of it where you want it and rename it there with a good description
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+

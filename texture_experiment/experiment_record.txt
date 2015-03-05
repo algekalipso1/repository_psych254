@@ -1,0 +1,18 @@
+
+
+March 4th 2015
+
+Experiment 1:
+Pilot A - 5 participants in Sandbox
+
+Created HIT 1: HITId=3W1K7D6QSBHB58LT59AYXY2CK0GZBA
+
+You may see your HIT(s) with HITTypeId '34CUFVRA0LZZLERD647BNZUIICMENE' here: 
+
+  https://workersandbox.mturk.com/mturk/preview?groupId=34CUFVRA0LZZLERD647BNZUIICMENE
+
+  End time: Wed Mar 04 17:34:00 PST 2015
+--[Done Loading HITs]----------
+  Total load time: 0 seconds.
+  Successfully loaded 1 HITs.
+~/Documents/Stanford/Winter2015/Psych254/hello/texture_experiment

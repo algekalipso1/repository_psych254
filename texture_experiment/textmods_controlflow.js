@@ -35,6 +35,9 @@ var experiment = {
     // For the 4 example trials
     example_chosen_positions: example_user_choices,
 
+    // Presentation time
+    time_shown: presentation_time,
+
 
 	// Free form text given by the participant
 	about: "",
@@ -224,7 +227,7 @@ var experiment = {
       	//} else {
       	//	button_advance_id += 'final_slide_button' + trial_counter;
       	//}
-      	var button_to_show = '<button class = "buttonAttr" type="button" id="' +  button_show_id +  '" onClick="showAndHide(\'ps' + identity_of_1 + '\',1250); showAndHide(\'ps' + identity_of_2 + '\', 1250); showAndHide(\'ps' + identity_of_3 + '\', 1250); justHide(\'' + button_show_id + '\'); ';
+      	var button_to_show = '<button class = "buttonAttr" type="button" id="' +  button_show_id +  '" onClick="showAndHide(\'ps' + identity_of_1 + '\', ' + String(presentation_time) + '); showAndHide(\'ps' + identity_of_2 + '\', ' + String(presentation_time) + '); showAndHide(\'ps' + identity_of_3 + '\', ' + String(presentation_time) + '); justHide(\'' + button_show_id + '\'); ';
       	button_to_show += 'justShow(\'tdchoice' + String(trial_counter) + '_' + String(0) +  '\'); justShow(\'tdchoice' + String(trial_counter) + '_' + String(1) +  '\'); justShow(\'tdchoice' + String(trial_counter) + '_' + String(2) +  '\'); experiment.clicked_show();">Show</button>';
 
 
@@ -237,8 +240,6 @@ var experiment = {
       	} else {
       		next_depending_on_trial += 'experiment.final_slide()';
       	};
-      	//$("#go_next_trial_button").html(button_to_advance);
-      	//$("#go_next_trial_button").hide();
 
       	var  user_input_selection = '';
 		user_input_selection += '<table align="center"><tr>';
