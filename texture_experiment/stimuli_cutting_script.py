@@ -14,12 +14,15 @@ import os
 
 
 picture_directory =  "/Users/andesgomez/Documents/Stanford/Winter2015/Psych254/hello/texture_experiment/images/full_set/"
-ready_stimuli =  "/Users/andesgomez/Documents/Stanford/Winter2015/Psych254/hello/texture_experiment/images/after_script/"
+#ready_stimuli =  "/Users/andesgomez/Documents/Stanford/Winter2015/Psych254/hello/texture_experiment/images/after_script/"
+ready_stimuli =  "/Users/andesgomez/Documents/Stanford/Winter2015/Psych254/hello/texture_experiment/images/correct_after_script"
+
 
 
 original_texture_directory = "/Users/andesgomez/Documents/Stanford/Winter2015/Psych254/hello/texture_experiment/images/"
 original_subdirectories = ["asymmetric", "structured", "pseudoperiodic"]
-synthesized_texture_directory = "/Users/andesgomez/Documents/Stanford/Winter2015/Psych254/hello/texture_experiment/images/"
+#synthesized_texture_directory = "/Users/andesgomez/Documents/Stanford/Winter2015/Psych254/hello/texture_experiment/images/"
+synthesized_texture_directory = "/Users/andesgomez/Documents/Stanford/Winter2015/Psych254/hello/texture_experiment/corrected_scale/"
 synthesized_subdirectories = ["full_set", "local_phase", "magnitude_corr", "marginals", "subband_corr"]
 
 remade_structured = "/Users/andesgomez/Documents/Stanford/Winter2015/Psych254/hello/texture_experiment/images/remakes/"

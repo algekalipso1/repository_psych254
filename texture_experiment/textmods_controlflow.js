@@ -116,11 +116,11 @@ var experiment = {
 		if (example_count < 3) {
 			example_text_explanation += "Instructions: You will choose the odd one out by clicking in the corresponding button. Center your vision in the X at the center of the screen. <br><br> "
 			example_text_explanation += " Click the 'show' button several times to see the images. For the first three example trials, the pictures will appear for 2 seconds so you notice the differences between the pictures.";
-			example_text_explanation += " In the 4th example trial and the rest of the experiment the pictures will be displayed for 250 miliseconds.";
+			example_text_explanation += " In the 4th example trial and the rest of the experiment the pictures will be displayed for 250 miliseconds. <br><br>";
 			example_text_explanation += " Note: The correct answer for this example is the " + example_odd_one[example_count] +  " image.";
 		}
 		if (example_count == 3) {
-			example_text_explanation += "This is the last example trial. Feel free to click the show button several times. Now the display time is 250 milliseconds, the same as that for the real trials.";
+			example_text_explanation += "This is the last example trial. Feel free to click the show button several times. Now the display time is 250 milliseconds, the same as that for the real trials. <br> <br>";
 			example_text_explanation += " Note: The correct answer for this example is the " + example_odd_one[example_count] +  " image.";
 		}
       	$("#exampleText").html(example_text_explanation);

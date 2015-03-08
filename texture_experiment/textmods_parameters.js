@@ -32,8 +32,9 @@ var trial_counter = -1;
 //  'structured'
 var image_type = "structured/";
 
+
 // Image path
-var impath = "images/after_script/";
+var impath = "images/correct_after_script/";
 
 
 // Time of presentation for the main task
@@ -43,6 +44,81 @@ var presentation_time = 250;
 // 60 trials total. 2 oddball X 5 statistical categories X 6 images ("X 3 image categories" if I was running the entire thing.)
 // Thus, each consecutive pair of even odd indexes are the two oddball conditions (2 synthetic, then 2 originals)
 // Never put consecutive stimuli numbers (like 0_0 and 0_1) because they can come from overlapping regions of the image
+var list_of_image_paths = [
+    [impath + image_type + "original/" + "0_5.bmp", impath + image_type + "full_set/" + "0_0.bmp", impath + image_type + "full_set/" + "0_2.bmp"],
+    [impath + image_type + "full_set/" + "0_4.bmp", impath + image_type + "original/" + "0_1.bmp", impath + image_type + "original/" + "0_3.bmp"],
+    [impath + image_type + "original/" + "1_0.bmp", impath + image_type + "full_set/" + "1_0.bmp", impath + image_type + "full_set/" + "1_2.bmp"],
+    [impath + image_type + "full_set/" + "1_4.bmp", impath + image_type + "original/" + "1_5.bmp", impath + image_type + "original/" + "1_7.bmp"],
+    [impath + image_type + "original/" + "2_4.bmp", impath + image_type + "full_set/" + "2_0.bmp", impath + image_type + "full_set/" + "2_2.bmp"],
+    [impath + image_type + "full_set/" + "2_4.bmp", impath + image_type + "original/" + "2_6.bmp", impath + image_type + "original/" + "2_8.bmp"],
+    [impath + image_type + "original/" + "3_3.bmp", impath + image_type + "full_set/" + "3_0.bmp", impath + image_type + "full_set/" + "3_2.bmp"],
+    [impath + image_type + "full_set/" + "3_4.bmp", impath + image_type + "original/" + "3_5.bmp", impath + image_type + "original/" + "3_8.bmp"],
+    [impath + image_type + "original/" + "4_6.bmp", impath + image_type + "full_set/" + "4_0.bmp", impath + image_type + "full_set/" + "4_2.bmp"],
+    [impath + image_type + "full_set/" + "4_4.bmp", impath + image_type + "original/" + "4_0.bmp", impath + image_type + "original/" + "4_3.bmp"],
+    [impath + image_type + "original/" + "5_7.bmp", impath + image_type + "full_set/" + "5_0.bmp", impath + image_type + "full_set/" + "5_2.bmp"],
+    [impath + image_type + "full_set/" + "5_4.bmp", impath + image_type + "original/" + "5_4.bmp", impath + image_type + "original/" + "5_1.bmp"],
+
+    [impath + image_type + "original/" + "0_5.bmp", impath + image_type + "local_phase/" + "0_0.bmp", impath + image_type + "local_phase/" + "0_2.bmp"],
+    [impath + image_type + "local_phase/" + "0_4.bmp", impath + image_type + "original/" + "0_1.bmp", impath + image_type + "original/" + "0_3.bmp"],
+    [impath + image_type + "original/" + "1_0.bmp", impath + image_type + "local_phase/" + "1_0.bmp", impath + image_type + "local_phase/" + "1_2.bmp"],
+    [impath + image_type + "local_phase/" + "1_4.bmp", impath + image_type + "original/" + "1_5.bmp", impath + image_type + "original/" + "1_7.bmp"],
+    [impath + image_type + "original/" + "2_4.bmp", impath + image_type + "local_phase/" + "2_0.bmp", impath + image_type + "local_phase/" + "2_2.bmp"],
+    [impath + image_type + "local_phase/" + "2_4.bmp", impath + image_type + "original/" + "2_6.bmp", impath + image_type + "original/" + "2_8.bmp"],
+    [impath + image_type + "original/" + "3_3.bmp", impath + image_type + "local_phase/" + "3_0.bmp", impath + image_type + "local_phase/" + "3_2.bmp"],
+    [impath + image_type + "local_phase/" + "3_4.bmp", impath + image_type + "original/" + "3_5.bmp", impath + image_type + "original/" + "3_8.bmp"],
+    [impath + image_type + "original/" + "4_6.bmp", impath + image_type + "local_phase/" + "4_0.bmp", impath + image_type + "local_phase/" + "4_2.bmp"],
+    [impath + image_type + "local_phase/" + "4_4.bmp", impath + image_type + "original/" + "4_0.bmp", impath + image_type + "original/" + "4_3.bmp"],
+    [impath + image_type + "original/" + "5_7.bmp", impath + image_type + "local_phase/" + "5_0.bmp", impath + image_type + "local_phase/" + "5_2.bmp"],
+    [impath + image_type + "local_phase/" + "5_4.bmp", impath + image_type + "original/" + "5_4.bmp", impath + image_type + "original/" + "5_1.bmp"],
+
+    [impath + image_type + "original/" + "0_5.bmp", impath + image_type + "magnitude_corr/" + "0_0.bmp", impath + image_type + "magnitude_corr/" + "0_2.bmp"],
+    [impath + image_type + "magnitude_corr/" + "0_4.bmp", impath + image_type + "original/" + "0_1.bmp", impath + image_type + "original/" + "0_3.bmp"],
+    [impath + image_type + "original/" + "1_0.bmp", impath + image_type + "magnitude_corr/" + "1_0.bmp", impath + image_type + "magnitude_corr/" + "1_2.bmp"],
+    [impath + image_type + "magnitude_corr/" + "1_4.bmp", impath + image_type + "original/" + "1_5.bmp", impath + image_type + "original/" + "1_7.bmp"],
+    [impath + image_type + "original/" + "2_4.bmp", impath + image_type + "magnitude_corr/" + "2_0.bmp", impath + image_type + "magnitude_corr/" + "2_2.bmp"],
+    [impath + image_type + "magnitude_corr/" + "2_4.bmp", impath + image_type + "original/" + "2_6.bmp", impath + image_type + "original/" + "2_8.bmp"],
+    [impath + image_type + "original/" + "3_3.bmp", impath + image_type + "magnitude_corr/" + "3_0.bmp", impath + image_type + "magnitude_corr/" + "3_2.bmp"],
+    [impath + image_type + "magnitude_corr/" + "3_4.bmp", impath + image_type + "original/" + "3_5.bmp", impath + image_type + "original/" + "3_8.bmp"],
+    [impath + image_type + "original/" + "4_6.bmp", impath + image_type + "magnitude_corr/" + "4_0.bmp", impath + image_type + "magnitude_corr/" + "4_2.bmp"],
+    [impath + image_type + "magnitude_corr/" + "4_4.bmp", impath + image_type + "original/" + "4_0.bmp", impath + image_type + "original/" + "4_3.bmp"],
+    [impath + image_type + "original/" + "5_7.bmp", impath + image_type + "magnitude_corr/" + "5_0.bmp", impath + image_type + "magnitude_corr/" + "5_2.bmp"],
+    [impath + image_type + "magnitude_corr/" + "5_4.bmp", impath + image_type + "original/" + "5_4.bmp", impath + image_type + "original/" + "5_1.bmp"],
+
+    [impath + image_type + "original/" + "0_5.bmp", impath + image_type + "marginals/" + "0_0.bmp", impath + image_type + "marginals/" + "0_2.bmp"],
+    [impath + image_type + "marginals/" + "0_4.bmp", impath + image_type + "original/" + "0_1.bmp", impath + image_type + "original/" + "0_3.bmp"],
+    [impath + image_type + "original/" + "1_0.bmp", impath + image_type + "marginals/" + "1_0.bmp", impath + image_type + "marginals/" + "1_2.bmp"],
+    [impath + image_type + "marginals/" + "1_4.bmp", impath + image_type + "original/" + "1_5.bmp", impath + image_type + "original/" + "1_7.bmp"],
+    [impath + image_type + "original/" + "2_4.bmp", impath + image_type + "marginals/" + "2_0.bmp", impath + image_type + "marginals/" + "2_2.bmp"],
+    [impath + image_type + "marginals/" + "2_4.bmp", impath + image_type + "original/" + "2_6.bmp", impath + image_type + "original/" + "2_8.bmp"],
+    [impath + image_type + "original/" + "3_3.bmp", impath + image_type + "marginals/" + "3_0.bmp", impath + image_type + "marginals/" + "3_2.bmp"],
+    [impath + image_type + "marginals/" + "3_4.bmp", impath + image_type + "original/" + "3_5.bmp", impath + image_type + "original/" + "3_8.bmp"],
+    [impath + image_type + "original/" + "4_6.bmp", impath + image_type + "marginals/" + "4_0.bmp", impath + image_type + "marginals/" + "4_2.bmp"],
+    [impath + image_type + "marginals/" + "4_4.bmp", impath + image_type + "original/" + "4_0.bmp", impath + image_type + "original/" + "4_3.bmp"],
+    [impath + image_type + "original/" + "5_7.bmp", impath + image_type + "marginals/" + "5_0.bmp", impath + image_type + "marginals/" + "5_2.bmp"],
+    [impath + image_type + "marginals/" + "5_4.bmp", impath + image_type + "original/" + "5_4.bmp", impath + image_type + "original/" + "5_1.bmp"],
+
+    [impath + image_type + "original/" + "0_5.bmp", impath + image_type + "subband_corr/" + "0_0.bmp", impath + image_type + "subband_corr/" + "0_2.bmp"],
+    [impath + image_type + "subband_corr/" + "0_4.bmp", impath + image_type + "original/" + "0_1.bmp", impath + image_type + "original/" + "0_3.bmp"],
+    [impath + image_type + "original/" + "1_0.bmp", impath + image_type + "subband_corr/" + "1_0.bmp", impath + image_type + "subband_corr/" + "1_2.bmp"],
+    [impath + image_type + "subband_corr/" + "1_4.bmp", impath + image_type + "original/" + "1_5.bmp", impath + image_type + "original/" + "1_7.bmp"],
+    [impath + image_type + "original/" + "2_4.bmp", impath + image_type + "subband_corr/" + "2_0.bmp", impath + image_type + "subband_corr/" + "2_2.bmp"],
+    [impath + image_type + "subband_corr/" + "2_4.bmp", impath + image_type + "original/" + "2_6.bmp", impath + image_type + "original/" + "2_8.bmp"],
+    [impath + image_type + "original/" + "3_3.bmp", impath + image_type + "subband_corr/" + "3_0.bmp", impath + image_type + "subband_corr/" + "3_2.bmp"],
+    [impath + image_type + "subband_corr/" + "3_4.bmp", impath + image_type + "original/" + "3_5.bmp", impath + image_type + "original/" + "3_8.bmp"],
+    [impath + image_type + "original/" + "4_6.bmp", impath + image_type + "subband_corr/" + "4_0.bmp", impath + image_type + "subband_corr/" + "4_2.bmp"],
+    [impath + image_type + "subband_corr/" + "4_4.bmp", impath + image_type + "original/" + "4_0.bmp", impath + image_type + "original/" + "4_3.bmp"],
+    [impath + image_type + "original/" + "5_7.bmp", impath + image_type + "subband_corr/" + "5_0.bmp", impath + image_type + "subband_corr/" + "5_2.bmp"],
+    [impath + image_type + "subband_corr/" + "5_4.bmp", impath + image_type + "original/" + "5_4.bmp", impath + image_type + "original/" + "5_1.bmp"],
+    
+    [impath + "calibration/" + "gr60.bmp", impath + "calibration/" + "gr190.bmp", impath + "calibration/" + "gr190.bmp"],
+    [impath + "calibration/" + "gr190.bmp", impath + "calibration/" + "gr60.bmp", impath + "calibration/" + "gr60.bmp"],
+    [impath + "calibration/" + "gr10.bmp", impath + "calibration/" + "gr240.bmp", impath + "calibration/" + "gr240.bmp"],
+    [impath + "calibration/" + "gr240.bmp", impath + "calibration/" + "gr10.bmp", impath + "calibration/" + "gr10.bmp"],
+    [impath + "calibration/" + "gr110.bmp", impath + "calibration/" + "gr130.bmp", impath + "calibration/" + "gr130.bmp"],
+    [impath + "calibration/" + "gr130.bmp", impath + "calibration/" + "gr110.bmp", impath + "calibration/" + "gr110.bmp"]
+    ];
+
+
 // var list_of_image_paths = [
 //     [impath + image_type + "original/" + "0_5.bmp", impath + image_type + "full_set/" + "0_0.bmp", impath + image_type + "full_set/" + "0_2.bmp"],
 //     [impath + image_type + "full_set/" + "0_4.bmp", impath + image_type + "original/" + "0_1.bmp", impath + image_type + "original/" + "0_3.bmp"],
@@ -56,75 +132,14 @@ var presentation_time = 250;
 //     [impath + image_type + "full_set/" + "4_4.bmp", impath + image_type + "original/" + "4_0.bmp", impath + image_type + "original/" + "4_3.bmp"],
 //     [impath + image_type + "original/" + "5_7.bmp", impath + image_type + "full_set/" + "5_0.bmp", impath + image_type + "full_set/" + "5_2.bmp"],
 //     [impath + image_type + "full_set/" + "5_4.bmp", impath + image_type + "original/" + "5_4.bmp", impath + image_type + "original/" + "5_1.bmp"],
-
-//     [impath + image_type + "original/" + "0_5.bmp", impath + image_type + "local_phase/" + "0_0.bmp", impath + image_type + "local_phase/" + "0_2.bmp"],
-//     [impath + image_type + "local_phase/" + "0_4.bmp", impath + image_type + "original/" + "0_1.bmp", impath + image_type + "original/" + "0_3.bmp"],
-//     [impath + image_type + "original/" + "1_0.bmp", impath + image_type + "local_phase/" + "1_0.bmp", impath + image_type + "local_phase/" + "1_2.bmp"],
-//     [impath + image_type + "local_phase/" + "1_4.bmp", impath + image_type + "original/" + "1_5.bmp", impath + image_type + "original/" + "1_7.bmp"],
-//     [impath + image_type + "original/" + "2_4.bmp", impath + image_type + "local_phase/" + "2_0.bmp", impath + image_type + "local_phase/" + "2_2.bmp"],
-//     [impath + image_type + "local_phase/" + "2_4.bmp", impath + image_type + "original/" + "2_6.bmp", impath + image_type + "original/" + "2_8.bmp"],
-//     [impath + image_type + "original/" + "3_3.bmp", impath + image_type + "local_phase/" + "3_0.bmp", impath + image_type + "local_phase/" + "3_2.bmp"],
-//     [impath + image_type + "local_phase/" + "3_4.bmp", impath + image_type + "original/" + "3_5.bmp", impath + image_type + "original/" + "3_8.bmp"],
-//     [impath + image_type + "original/" + "4_6.bmp", impath + image_type + "local_phase/" + "4_0.bmp", impath + image_type + "local_phase/" + "4_2.bmp"],
-//     [impath + image_type + "local_phase/" + "4_4.bmp", impath + image_type + "original/" + "4_0.bmp", impath + image_type + "original/" + "4_3.bmp"],
-//     [impath + image_type + "original/" + "5_7.bmp", impath + image_type + "local_phase/" + "5_0.bmp", impath + image_type + "local_phase/" + "5_2.bmp"],
-//     [impath + image_type + "local_phase/" + "5_4.bmp", impath + image_type + "original/" + "5_4.bmp", impath + image_type + "original/" + "5_1.bmp"],
-
-//     [impath + image_type + "original/" + "0_5.bmp", impath + image_type + "magnitude_corr/" + "0_0.bmp", impath + image_type + "magnitude_corr/" + "0_2.bmp"],
-//     [impath + image_type + "magnitude_corr/" + "0_4.bmp", impath + image_type + "original/" + "0_1.bmp", impath + image_type + "original/" + "0_3.bmp"],
-//     [impath + image_type + "original/" + "1_0.bmp", impath + image_type + "magnitude_corr/" + "1_0.bmp", impath + image_type + "magnitude_corr/" + "1_2.bmp"],
-//     [impath + image_type + "magnitude_corr/" + "1_4.bmp", impath + image_type + "original/" + "1_5.bmp", impath + image_type + "original/" + "1_7.bmp"],
-//     [impath + image_type + "original/" + "2_4.bmp", impath + image_type + "magnitude_corr/" + "2_0.bmp", impath + image_type + "magnitude_corr/" + "2_2.bmp"],
-//     [impath + image_type + "magnitude_corr/" + "2_4.bmp", impath + image_type + "original/" + "2_6.bmp", impath + image_type + "original/" + "2_8.bmp"],
-//     [impath + image_type + "original/" + "3_3.bmp", impath + image_type + "magnitude_corr/" + "3_0.bmp", impath + image_type + "magnitude_corr/" + "3_2.bmp"],
-//     [impath + image_type + "magnitude_corr/" + "3_4.bmp", impath + image_type + "original/" + "3_5.bmp", impath + image_type + "original/" + "3_8.bmp"],
-//     [impath + image_type + "original/" + "4_6.bmp", impath + image_type + "magnitude_corr/" + "4_0.bmp", impath + image_type + "magnitude_corr/" + "4_2.bmp"],
-//     [impath + image_type + "magnitude_corr/" + "4_4.bmp", impath + image_type + "original/" + "4_0.bmp", impath + image_type + "original/" + "4_3.bmp"],
-//     [impath + image_type + "original/" + "5_7.bmp", impath + image_type + "magnitude_corr/" + "5_0.bmp", impath + image_type + "magnitude_corr/" + "5_2.bmp"],
-//     [impath + image_type + "magnitude_corr/" + "5_4.bmp", impath + image_type + "original/" + "5_4.bmp", impath + image_type + "original/" + "5_1.bmp"],
-
-//     [impath + image_type + "original/" + "0_5.bmp", impath + image_type + "marginals/" + "0_0.bmp", impath + image_type + "marginals/" + "0_2.bmp"],
-//     [impath + image_type + "marginals/" + "0_4.bmp", impath + image_type + "original/" + "0_1.bmp", impath + image_type + "original/" + "0_3.bmp"],
-//     [impath + image_type + "original/" + "1_0.bmp", impath + image_type + "marginals/" + "1_0.bmp", impath + image_type + "marginals/" + "1_2.bmp"],
-//     [impath + image_type + "marginals/" + "1_4.bmp", impath + image_type + "original/" + "1_5.bmp", impath + image_type + "original/" + "1_7.bmp"],
-//     [impath + image_type + "original/" + "2_4.bmp", impath + image_type + "marginals/" + "2_0.bmp", impath + image_type + "marginals/" + "2_2.bmp"],
-//     [impath + image_type + "marginals/" + "2_4.bmp", impath + image_type + "original/" + "2_6.bmp", impath + image_type + "original/" + "2_8.bmp"],
-//     [impath + image_type + "original/" + "3_3.bmp", impath + image_type + "marginals/" + "3_0.bmp", impath + image_type + "marginals/" + "3_2.bmp"],
-//     [impath + image_type + "marginals/" + "3_4.bmp", impath + image_type + "original/" + "3_5.bmp", impath + image_type + "original/" + "3_8.bmp"],
-//     [impath + image_type + "original/" + "4_6.bmp", impath + image_type + "marginals/" + "4_0.bmp", impath + image_type + "marginals/" + "4_2.bmp"],
-//     [impath + image_type + "marginals/" + "4_4.bmp", impath + image_type + "original/" + "4_0.bmp", impath + image_type + "original/" + "4_3.bmp"],
-//     [impath + image_type + "original/" + "5_7.bmp", impath + image_type + "marginals/" + "5_0.bmp", impath + image_type + "marginals/" + "5_2.bmp"],
-//     [impath + image_type + "marginals/" + "5_4.bmp", impath + image_type + "original/" + "5_4.bmp", impath + image_type + "original/" + "5_1.bmp"],
-
-//     [impath + image_type + "original/" + "0_5.bmp", impath + image_type + "subband_corr/" + "0_0.bmp", impath + image_type + "subband_corr/" + "0_2.bmp"],
-//     [impath + image_type + "subband_corr/" + "0_4.bmp", impath + image_type + "original/" + "0_1.bmp", impath + image_type + "original/" + "0_3.bmp"],
-//     [impath + image_type + "original/" + "1_0.bmp", impath + image_type + "subband_corr/" + "1_0.bmp", impath + image_type + "subband_corr/" + "1_2.bmp"],
-//     [impath + image_type + "subband_corr/" + "1_4.bmp", impath + image_type + "original/" + "1_5.bmp", impath + image_type + "original/" + "1_7.bmp"],
-//     [impath + image_type + "original/" + "2_4.bmp", impath + image_type + "subband_corr/" + "2_0.bmp", impath + image_type + "subband_corr/" + "2_2.bmp"],
-//     [impath + image_type + "subband_corr/" + "2_4.bmp", impath + image_type + "original/" + "2_6.bmp", impath + image_type + "original/" + "2_8.bmp"],
-//     [impath + image_type + "original/" + "3_3.bmp", impath + image_type + "subband_corr/" + "3_0.bmp", impath + image_type + "subband_corr/" + "3_2.bmp"],
-//     [impath + image_type + "subband_corr/" + "3_4.bmp", impath + image_type + "original/" + "3_5.bmp", impath + image_type + "original/" + "3_8.bmp"],
-//     [impath + image_type + "original/" + "4_6.bmp", impath + image_type + "subband_corr/" + "4_0.bmp", impath + image_type + "subband_corr/" + "4_2.bmp"],
-//     [impath + image_type + "subband_corr/" + "4_4.bmp", impath + image_type + "original/" + "4_0.bmp", impath + image_type + "original/" + "4_3.bmp"],
-//     [impath + image_type + "original/" + "5_7.bmp", impath + image_type + "subband_corr/" + "5_0.bmp", impath + image_type + "subband_corr/" + "5_2.bmp"],
-//     [impath + image_type + "subband_corr/" + "5_4.bmp", impath + image_type + "original/" + "5_4.bmp", impath + image_type + "original/" + "5_1.bmp"]
+//     [impath + image_type + "full_set/" + "5_4.bmp", impath + image_type + "original/" + "5_4.bmp", impath + image_type + "original/" + "5_1.bmp"],
+//     [impath + "calibration/" + "gr60.bmp", impath + "calibration/" + "gr190.bmp", impath + "calibration/" + "gr190.bmp"],
+//     [impath + "calibration/" + "gr190.bmp", impath + "calibration/" + "gr60.bmp", impath + "calibration/" + "gr60.bmp"],
+//     [impath + "calibration/" + "gr10.bmp", impath + "calibration/" + "gr240.bmp", impath + "calibration/" + "gr240.bmp"],
+//     [impath + "calibration/" + "gr240.bmp", impath + "calibration/" + "gr10.bmp", impath + "calibration/" + "gr10.bmp"],
+//     [impath + "calibration/" + "gr110.bmp", impath + "calibration/" + "gr130.bmp", impath + "calibration/" + "gr130.bmp"],
+//     [impath + "calibration/" + "gr130.bmp", impath + "calibration/" + "gr110.bmp", impath + "calibration/" + "gr110.bmp"]
 //     ];
-
-
-var list_of_image_paths = [
-    [impath + image_type + "original/" + "0_5.bmp", impath + image_type + "full_set/" + "0_0.bmp", impath + image_type + "full_set/" + "0_2.bmp"],
-    [impath + image_type + "full_set/" + "0_4.bmp", impath + image_type + "original/" + "0_1.bmp", impath + image_type + "original/" + "0_3.bmp"],
-    [impath + image_type + "original/" + "1_0.bmp", impath + image_type + "full_set/" + "1_0.bmp", impath + image_type + "full_set/" + "1_2.bmp"],
-    [impath + image_type + "full_set/" + "1_4.bmp", impath + image_type + "original/" + "1_5.bmp", impath + image_type + "original/" + "1_7.bmp"],
-    [impath + image_type + "original/" + "2_4.bmp", impath + image_type + "full_set/" + "2_0.bmp", impath + image_type + "full_set/" + "2_2.bmp"],
-    [impath + image_type + "full_set/" + "2_4.bmp", impath + image_type + "original/" + "2_6.bmp", impath + image_type + "original/" + "2_8.bmp"],
-    [impath + image_type + "original/" + "3_3.bmp", impath + image_type + "full_set/" + "3_0.bmp", impath + image_type + "full_set/" + "3_2.bmp"],
-    [impath + image_type + "full_set/" + "3_4.bmp", impath + image_type + "original/" + "3_5.bmp", impath + image_type + "original/" + "3_8.bmp"],
-    [impath + image_type + "original/" + "4_6.bmp", impath + image_type + "full_set/" + "4_0.bmp", impath + image_type + "full_set/" + "4_2.bmp"],
-    [impath + image_type + "full_set/" + "4_4.bmp", impath + image_type + "original/" + "4_0.bmp", impath + image_type + "original/" + "4_3.bmp"],
-    [impath + image_type + "original/" + "5_7.bmp", impath + image_type + "full_set/" + "5_0.bmp", impath + image_type + "full_set/" + "5_2.bmp"],
-    [impath + image_type + "full_set/" + "5_4.bmp", impath + image_type + "original/" + "5_4.bmp", impath + image_type + "original/" + "5_1.bmp"]
-    ];
 
 
 // var list_of_image_paths = [

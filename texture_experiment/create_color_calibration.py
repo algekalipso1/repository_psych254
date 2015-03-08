@@ -46,3 +46,19 @@ for i in range(X):
 
 b_image.show()
 b_image.save(file_to_save + "b.bmp")
+
+
+
+
+# Grey
+for gv in range(10, 255, 10):
+	name = 'gr' + str(gv)
+	gy_image = Image.new('RGB', (X, Y))
+	gy_pixels = gy_image.load()
+	for i in range(X):
+		for j in range(Y):
+			gy_pixels[i, j] = (255, 255, 255)
+			if ((i - 63)**2 + (j-63)**2)**.5 <= 64:
+				gy_pixels[i, j] = (gv, gv, gv)
+	gy_image.show()
+	gy_image.save(file_to_save + name +".bmp")
