@@ -63,7 +63,7 @@ var experiment = {
 		example_text_explanation += " Stay where you are if your thumbnail fully covers the circle when you touch the screen. If your thumbnail is smaller than the circle's diameter, then move away from the screen";
 		example_text_explanation +=	" until your thumbnail just covers the blue circle.";
 		example_text_explanation += " Then stay at that distance from your computer for the duration of this experiment.";
-		example_text_explanation += " Click next.";
+		example_text_explanation += " Click next or press the space bar.";
       	$("#calibrationText").html(example_text_explanation);
       	var place_count = 0;
       	var triT = '<table id = "example_table" class = "tdt">';
@@ -115,8 +115,8 @@ var experiment = {
 		example_count += 1;
 		var example_text_explanation = "Example trial #" + String(example_count + 1) + ".<br><br>";
 		if (example_count < 3) {
-			example_text_explanation += "Instructions: You will choose the odd one out by clicking in the corresponding button. Center your vision in the X at the center of the screen. <br><br> "
-			example_text_explanation += " Click the 'show' button several times to see the images. For the first three example trials, the pictures will appear for 2 seconds so you notice the differences between the pictures.";
+			example_text_explanation += "Instructions: You will choose the odd one out by clicking in the corresponding button or key (1 for left, 2 for top, 3 for right).<br><br> Center your vision in the X at the center of the screen. <br><br> "
+			example_text_explanation += " Click the 'show' button, or press the space bar, several times to see the images. For the first three example trials, the pictures will appear for 2 seconds. Notice the differences between the pictures.";
 			example_text_explanation += " In the 4th example trial and the rest of the experiment the pictures will be displayed for 250 miliseconds. <br><br>";
 			example_text_explanation += " Note: The correct answer for this example is the " + example_odd_one[example_count] +  " image.";
 		}
@@ -231,9 +231,9 @@ var experiment = {
 
 
       	// The trial counter to be added to the response table below
-		var number_trial_displayed = "<br>Trial " + String(trial_counter + 1) + " /" + String(number_of_trials);
+		var number_trial_displayed = "Trial " + String(trial_counter + 1) + " /" + String(number_of_trials);
 
-
+		var spaces_for_space = "            ";
       	// Dynamically create a button that either sends you to the same slide with updated
       	// picture values or, if the number of trials is reached, sends you to the end slide / or the "what was it about?" slide
 		var next_depending_on_trial = '';
@@ -247,6 +247,12 @@ var experiment = {
       	var  user_input_selection = '';
 		user_input_selection += '<table align="center"><tr>';
 
+		user_input_selection += '<td>' + spaces_for_space + '</td>';
+		user_input_selection += '<td align="center">' + number_trial_displayed + '</td>';
+		user_input_selection += '<td>' + spaces_for_space + '</td>';
+
+		user_input_selection += '</tr>' 
+		user_input_selection +='<tr>';
 
 		for (i=0;i<3;i++) {
 			user_input_selection += '<td width=98px height=50px align="center"' + 
@@ -259,15 +265,8 @@ var experiment = {
 		user_input_selection += '</tr>';
 		user_input_selection +='<tr>';
 		user_input_selection += '<td></td>';
-		user_input_selection += '<td>' + button_to_show + '</td>';
+		user_input_selection += '<td align="center">' + button_to_show + '</td>';
 		user_input_selection += '<td></td>';
-
-		user_input_selection += '</tr>' 
-		user_input_selection +='<tr>';
-		user_input_selection += '<td></td>';
-		user_input_selection += '<td>' + number_trial_displayed + '</td>';
-		user_input_selection += '<td></td>';
-
 		user_input_selection += '</tr></table>';
 
 		$("#userSelectionInputFields").html(user_input_selection)
@@ -515,9 +514,19 @@ document.addEventListener('keydown', function(event) {
 
 
 
+for (var i = 0; i < number_of_trials; i++){
+    for (var j = 0; j < 3; j ++) {
+        list_of_image_names.push(list_of_image_paths[i][j]);
+    };
+};
+$("#num-total").text(list_of_image_names.length);
 
+showSlide('preload');
 
 // Initial entry point to the Javascript program flow
+preload(list_of_image_names,
+        onLoadedOne,
+        onLoadedAll);
 
-experiment.calibration_trial();
+
 

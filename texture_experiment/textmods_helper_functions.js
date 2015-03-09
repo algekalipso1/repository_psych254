@@ -104,6 +104,62 @@ function justShow(id) {
 
 
 
+
+// For preloading
+function preload(images, onLoadedOne, onLoadedAll) {
+  var remainingImages = images.slice();
+  var finished = false;
+
+  // set delayInterval to 800 for testing to see that everything actually loads
+  // for real use, set to 0 
+  var loadDelayInterval = 0;
+
+  var worker = function() {
+    if (remainingImages.length == 0) {
+      if (!finished) {
+        finished = true;
+        setTimeout(onLoadedAll, loadDelayInterval);
+      }
+    } else {
+
+      var src = remainingImages.shift(); 
+      
+      var image = new Image();
+      image.onload = function() {
+        onLoadedOne();
+        setTimeout(worker, loadDelayInterval);
+      };
+      image.src = src;
+    }
+  };
+
+  // load images 6 at a time
+  var concurrent = 5;
+  for(var i = 0; i < concurrent; i++) {
+    setTimeout(worker, 20 - i);
+  };
+}
+
+
+var numLoadedImages = 0;
+function onLoadedOne() {
+  numLoadedImages++;
+  $("#num-loaded").text(numLoadedImages); 
+}
+
+// define a function that will get called once
+// all images have been successfully loaded
+function onLoadedAll() {
+  experiment.calibration_trial();
+}
+
+
+
+
+
+
+
+
 // The following function provides a way to "click" buttons with key presses
 
 function searchKeyPress(e)

@@ -22,6 +22,12 @@
   <body>
 
 
+    <!-- Loading phase -->
+    <div class="slide" id ="preload"> 
+    Loading images:
+      <span id="num-loaded"></span> / <span id="num-total"></span> loaded so far
+    </div>
+
     <!-- Calibration trial with three circles -->
     <div class="slide" id="calibration_trial">
       <div class = "instruction_text" id="calibrationText"> </div>
@@ -49,17 +55,13 @@
 
     <!-- The actual trials, in sequence.--> 
     <div class="slide" id="series_of_trials">
-      
       <br>
-      <div class="trifectalCenter"> <!--  <div align = "center">-->
-        <div id = "triangularTable" class = "tdt"></div>
+       <div align = "center"><!-- <div class="trifectalCenter"> -->
+        <div id = "triangularTable"></div>
       </div>
       <div class = "responseTable">
         <div id= "userSelectionInputFields"> </div>
-        <br><br>
-        <div align = "center" class = "counterText" id="trialText"> </div>
       </div>
-      
     </div>
 
 

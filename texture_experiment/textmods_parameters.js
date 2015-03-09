@@ -163,6 +163,14 @@ var image_sources_for_example = [
     ["images/after_script/asymmetric/full_set/4_0.bmp", "images/after_script/asymmetric/original/4_0.bmp", "images/after_script/asymmetric/original/4_0.bmp"]
     ];
 
+var list_of_image_names = [];
+for (var i = 0; i < number_of_trials; i++){
+    for (var j = 0; j < 3; j ++) {
+        list_of_image_names.push(list_of_image_paths[i][j]);
+    };
+};
+$("#num-total").text(list_of_image_names.length);
+
 
 var calibration_images = ["images/after_script/calibration/r.bmp", "images/after_script/calibration/g.bmp", "images/after_script/calibration/b.bmp"];
 

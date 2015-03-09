@@ -87,7 +87,7 @@ reward::0.2
 numberofassignments::5
 &&&	How many subjects you want. You can always add more later, through the web interface.
 
-assignmentduration::600
+assignmentduration::1200
 &&& 	In seconds. 
 
 hitlifetime::604800       
