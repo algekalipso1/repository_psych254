@@ -111,6 +111,7 @@ var experiment = {
 
 	next_example_trial: function() {
 
+		has_clicked_show = 0;
 		example_count += 1;
 		var example_text_explanation = "Example trial #" + String(example_count + 1) + ".<br><br>";
 		if (example_count < 3) {
@@ -146,7 +147,7 @@ var experiment = {
       	$("#triangularTableExample").html(triT);
 
       	// The "Show" button. 
-      	var button_show_id = 'exampleShow' + trial_counter;
+      	var button_show_id = 'exampleShow' + example_count;
       	var button_to_show = '<button class = "buttonAttr" type="button" id="' +  button_show_id +  '" onClick="showAndHide(\'ps1\', 2000); showAndHide(\'ps2\', 2000); showAndHide(\'ps3\', 2000); justShow(\'exampleChoice' + String(0) +  '_'  + String(example_count) +'\'); justShow(\'exampleChoice' + String(1) +  '_'  + String(example_count) +'\'); justShow(\'exampleChoice' + String(2) + '_'  + String(example_count) + '\'); experiment.clicked_show();">Show</button>';
       	if (example_count == 3) {
       		button_to_show = '<button class = "buttonAttr" type="button" id="' +  button_show_id +  '" onClick="showAndHide(\'ps1\', 250); showAndHide(\'ps2\', 250); showAndHide(\'ps3\', 250); justShow(\'exampleChoice' + String(0) +  '_'  + String(example_count) +'\'); justShow(\'exampleChoice' + String(1) +  '_'  + String(example_count) +'\'); justShow(\'exampleChoice' + String(2) + '_'  + String(example_count) + '\'); experiment.clicked_show();">Show</button>';
@@ -380,6 +381,7 @@ var experiment = {
 	},
 
 	final_slide: function() {
+		all_trials_completed = 1;
 		showSlide("end_slide");
 	},
 
@@ -411,6 +413,111 @@ var experiment = {
 }
 
 
+
+
+// ---------------- SECTION FOR HANDLING KEYBOARD INPUT ------------------
+
+// Set an event listener for the entire document so that the user
+// doesn't have to be clicking on any specific part of the screen
+// for their keypress to register properly.
+//
+// Calls click() on the appropriate buttons so no code duplication is required.
+
+document.addEventListener('keydown', function(event) {
+    if (String.fromCharCode(event.keyCode) == "1") {
+    	// Used for the "Left" button.
+
+    	// Still in calibration mode.
+    	if (example_count == -1) {
+    		// Do nothing.
+    	}
+    	// Looking at the ending, submit slide, after all trials finished.
+    	else if (all_trials_completed == 1) {
+    		// Do nothing.
+    	}
+    	// In example mode.
+    	else if (has_clicked_show == 1 && example_count <= 3 && trial_counter == -1) {
+    		
+    		$("#exampleChoice0_" + String(example_count)).click();
+    	}
+    	// Real trials.
+    	else if (has_clicked_show == 1 && trial_counter > -1) {
+    		$("#tdchoice" + String(trial_counter) + '_0').click();
+    	}
+    }
+
+    else if (String.fromCharCode(event.keyCode) == "2") {
+    	// Used for the "Top" button.
+        
+        // Still in calibration mode.
+        if (example_count == -1) {
+    		// Do nothing.
+    	}
+    	// Looking at the ending, submit slide, after all trials finished.
+    	else if (all_trials_completed == 1) {
+    		// Do nothing.
+    	}
+    	// In example mode.
+    	else if (has_clicked_show == 1 && example_count <= 3 && trial_counter == -1) {
+    		$("#exampleChoice1_" + String(example_count)).click();
+    	}
+    	// Real trials.
+    	else if (has_clicked_show == 1 && trial_counter > -1) {
+    		$("#tdchoice" + String(trial_counter) + '_1').click();
+    	}
+    }
+
+    else if (String.fromCharCode(event.keyCode) == "3") {
+    	// Used for the "Right" button.
+
+    	// Still in calibration mode.
+    	if (example_count == -1) {
+    		// Do nothing.
+    	}
+    	// Looking at the ending, submit slide, after all trials finished.
+    	else if (all_trials_completed == 1) {
+    		// Do nothing.
+    	}
+    	// In example mode.
+    	else if (has_clicked_show == 1 && example_count <= 3 && trial_counter == -1) {
+    		$("#exampleChoice2_" + String(example_count)).click();
+    	}
+    	// Real trials.
+    	else if (has_clicked_show == 1 && trial_counter > -1) {
+    		$("#tdchoice" + String(trial_counter) + '_2').click();
+    	}
+    }
+
+    else if (String.fromCharCode(event.keyCode) == " ") {
+    	// Used for the "show" button.
+
+    	// Still in calibration mode.
+    	if (example_count == -1) {
+    		$("#calibration_next").click();
+    	}
+    	// Looking at the ending, submit slide, after all trials finished.
+    	else if (all_trials_completed == 1) {
+    		// Do nothing.
+    	}
+    	// In Example mode.
+    	// In the example mode, you can use the "show" button as much as you want.
+    	else if (example_count <= 3 && trial_counter == -1) {
+    		$("#exampleShow" + String(example_count)).click();
+    	}
+    	// Real trials.
+    	// Can only click the "show" button once.
+    	else if (has_clicked_show == 0 && trial_counter > -1) {
+    		$("#showImagesButton" + String(trial_counter)).click();
+    	}
+
+    }
+}, true);
+
+
+
+
+
+// Initial entry point to the Javascript program flow
 
 experiment.calibration_trial();
 
