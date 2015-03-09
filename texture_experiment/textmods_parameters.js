@@ -26,6 +26,9 @@ var example_count = -1;
 // Trial counter for the real trials
 var trial_counter = -1;
 
+// Set to 1 when all trials are completed.
+var all_trials_completed = 0;
+
 // Type of image shown. Options
 //  'asymmetric'
 //  'pseudoperiodic'
