@@ -184,6 +184,14 @@ p.simpleText {
   visibility: visible;
 }
 
+.counterText {
+  position: absolute;
+  left-margin: auto;
+  right-margin: auto;
+  left: 50%;
+  bottom: 5%;
+}
+
 
 
 /**

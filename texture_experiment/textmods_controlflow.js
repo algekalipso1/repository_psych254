@@ -186,8 +186,6 @@ var experiment = {
 	next_real_trial: function() {
 		has_clicked_show = 0;
       	trial_counter += 1;
-		var example_text_explanation = "Choose the odd one out. <br> (Now it is for real) <br> Trial " + String(trial_counter + 1) + " /" + String(number_of_trials);
-      	$("#trialText").html(example_text_explanation);
       	var picture_1 = list_of_image_paths[sequence_order[trial_counter]][0];
       	var picture_2 = list_of_image_paths[sequence_order[trial_counter]][1];
       	var picture_3 = list_of_image_paths[sequence_order[trial_counter]][2];
@@ -231,6 +229,10 @@ var experiment = {
       	button_to_show += 'justShow(\'tdchoice' + String(trial_counter) + '_' + String(0) +  '\'); justShow(\'tdchoice' + String(trial_counter) + '_' + String(1) +  '\'); justShow(\'tdchoice' + String(trial_counter) + '_' + String(2) +  '\'); experiment.clicked_show();">Show</button>';
 
 
+      	// The trial counter to be added to the response table below
+		var number_trial_displayed = "<br>Trial " + String(trial_counter + 1) + " /" + String(number_of_trials);
+
+
       	// Dynamically create a button that either sends you to the same slide with updated
       	// picture values or, if the number of trials is reached, sends you to the end slide / or the "what was it about?" slide
 		var next_depending_on_trial = '';
@@ -254,12 +256,21 @@ var experiment = {
 			user_input_selection += '</td>';
 		}
 		user_input_selection += '</tr>';
+		user_input_selection +='<tr>';
 		user_input_selection += '<td></td>';
 		user_input_selection += '<td>' + button_to_show + '</td>';
 		user_input_selection += '<td></td>';
+
+		user_input_selection += '</tr>' 
 		user_input_selection +='<tr>';
+		user_input_selection += '<td></td>';
+		user_input_selection += '<td>' + number_trial_displayed + '</td>';
+		user_input_selection += '<td></td>';
+
 		user_input_selection += '</tr></table>';
+
 		$("#userSelectionInputFields").html(user_input_selection)
+
 
 		showSlide("series_of_trials");
 	},
