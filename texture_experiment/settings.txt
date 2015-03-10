@@ -45,7 +45,7 @@ rewriteProperties::yes
 &&&     Selecting 'no' here means that you have to manually choose whether to go live or use the Sandbox, by going to the mturk.properties file and uncommenting the appropriate service URL and commenting out the wrong one. If you choose the manual route, the next ('liveHIT') option is not relevant. Also check that you're using https as Amazon has stopped supporting non-secure connections.
 &&&     This option was added on 8/21/12, in response to changes at AWS which rendered the useful -sandbox CLT option obsolete. (Grr.) 
 
-liveHIT::no
+liveHIT::yes
 &&&     Is this live or sandbox? set to yes to go live. default is no (sandbox). This is only relevant if you've decided to let Submiterator manipulate your mturk-properties file, by selecting 'yes' for the rewriteProperties option. Otherwise, choose sandbox vs. live HIT it manually by modifying the mturk.properties file.
 
 title::Identify the odd one out
@@ -81,7 +81,7 @@ minPercentPreviousHITsApproved::90
 frameheight::500
 &&&	The height of the embedded frame that your subjects will see, in pixels. When setting this, think about the smallest screen size you can expect your workers to have. Play with this parameter by posting several times to the sandbox with different settings and seeing which works for your specific experiment for a given screen size. 
 
-reward::0.2
+reward::.7
 &&&	How much you're paying per HIT, in dollars. E.g., if you want to pay 30 cents per HIT, enter ".30".
 
 numberofassignments::5

@@ -176,6 +176,8 @@ p.simpleText {
     visibility: visible;
 }
 
+
+
 .advanceB {
   visibility: hidden;
 }
@@ -191,6 +193,13 @@ p.simpleText {
   left: 50%;
   bottom: 5%;
 }
+
+
+.stimuliLocation {
+  position: absolute;
+}
+
+
 
 
 

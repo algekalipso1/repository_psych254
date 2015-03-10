@@ -15,3 +15,9 @@ WHat about the idea that you always have some kind of space active in your visua
 
 window.open('task.html')
 opener.turk.submit
+
+
+
+
+center the stimuli vertically properly
+screen.available height

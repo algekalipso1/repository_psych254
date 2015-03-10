@@ -38,6 +38,10 @@ var experiment = {
     // Presentation time
     time_shown: presentation_time,
 
+    // Shown setting
+    showing_buttons: buttons_shown,
+    showing_trial_counter: counter_shown,
+
 
 	// Free form text given by the participant
 	about: "",
@@ -58,11 +62,13 @@ var experiment = {
 
 	calibration_trial: function() {
 		var example_text_explanation = "Calibration.<br> <br>";
+		example_text_explanation += "<b> <font size='3'> Please maximize this window to cover as much of your screen as possible. </font> </b> <br><br>";
 		example_text_explanation += " Please extend your right arm while sticking your thumb up.";
 		example_text_explanation += " Close your left eye and place your thumbnail between your right eye and the bottom-right circle.";
 		example_text_explanation += " Stay where you are if your thumbnail fully covers the circle when you touch the screen. If your thumbnail is smaller than the circle's diameter, then move away from the screen";
 		example_text_explanation +=	" until your thumbnail just covers the blue circle.";
-		example_text_explanation += " Then stay at that distance from your computer for the duration of this experiment.";
+		example_text_explanation += " Then stay at that distance from your computer for the duration of this experiment. <br><br>";
+		example_text_explanation += " There will be a total of " + number_of_trials + " real trials and 4 example trials.";
 		example_text_explanation += " Click next or press the space bar.";
       	$("#calibrationText").html(example_text_explanation);
       	var place_count = 0;
@@ -70,9 +76,9 @@ var experiment = {
       	for (i = 0; i < 4; i ++) {
       		triT += '<tr>';
       		for (j = 0; j < 5; j ++) {
-      			triT += '<td width=64px height=64px>';
+      			triT += '<td width="64px" height="64px">';
       			if ((i == 0 && j == 2) || (i == 3 && (j == 0 || j == 4) ))  {
-      				triT += '<img class = "imageCalibration" id = "crgb' + String(i + 1) + '" width=64px height=64px src="' + calibration_images[place_count] +  '">'
+      				triT += '<img class = "imageCalibration" id = "crgb' + String(i + 1) + '" width="64px" height="64px" src="' + calibration_images[place_count] +  '">'
       				place_count += 1;
       			}
       			if (i == 2 && j == 2) {
@@ -115,13 +121,13 @@ var experiment = {
 		example_count += 1;
 		var example_text_explanation = "Example trial #" + String(example_count + 1) + ".<br><br>";
 		if (example_count < 3) {
-			example_text_explanation += "Instructions: You will choose the odd one out by clicking in the corresponding button or key (1 for left, 2 for top, 3 for right).<br><br> Center your vision in the X at the center of the screen. <br><br> "
-			example_text_explanation += " Click the 'show' button, or press the space bar, several times to see the images. For the first three example trials, the pictures will appear for 2 seconds. Notice the differences between the pictures.";
-			example_text_explanation += " In the 4th example trial and the rest of the experiment the pictures will be displayed for 250 miliseconds. <br><br>";
+			example_text_explanation += "Instructions: Press the space bar to see the images (you can do this multiple times during example trials). You will choose the odd one out by pressing keys: 1 for left image, 2 for top image, 3 for right image.<br><br> Center your vision in the X at the center of the screen. <br><br> "
+			example_text_explanation += " For the first three example trials, the pictures will appear for 2 seconds. Notice the differences between the pictures.";
+			example_text_explanation += " In the 4th example trial and for the rest of the experiment the pictures will be displayed for 250 miliseconds. <br><br>";
 			example_text_explanation += " Note: The correct answer for this example is the " + example_odd_one[example_count] +  " image.";
 		}
 		if (example_count == 3) {
-			example_text_explanation += "This is the last example trial. Feel free to click the show button several times. Now the display time is 250 milliseconds, the same as that for the real trials. <br> <br>";
+			example_text_explanation += "This is the last example trial. Feel free to press the space bar several times. From now on the display time will be 250 milliseconds. <br><br> To minimize distractions we won't show you a trial counter. Remember there are 66 trials. It should take you no more than 5 minutes. Please be patient.<br><br>";
 			example_text_explanation += " Note: The correct answer for this example is the " + example_odd_one[example_count] +  " image.";
 		}
       	$("#exampleText").html(example_text_explanation);
@@ -148,9 +154,18 @@ var experiment = {
 
       	// The "Show" button. 
       	var button_show_id = 'exampleShow' + example_count;
-      	var button_to_show = '<button class = "buttonAttr" type="button" id="' +  button_show_id +  '" onClick="showAndHide(\'ps1\', 2000); showAndHide(\'ps2\', 2000); showAndHide(\'ps3\', 2000); justShow(\'exampleChoice' + String(0) +  '_'  + String(example_count) +'\'); justShow(\'exampleChoice' + String(1) +  '_'  + String(example_count) +'\'); justShow(\'exampleChoice' + String(2) + '_'  + String(example_count) + '\'); experiment.clicked_show();">Show</button>';
-      	if (example_count == 3) {
-      		button_to_show = '<button class = "buttonAttr" type="button" id="' +  button_show_id +  '" onClick="showAndHide(\'ps1\', 250); showAndHide(\'ps2\', 250); showAndHide(\'ps3\', 250); justShow(\'exampleChoice' + String(0) +  '_'  + String(example_count) +'\'); justShow(\'exampleChoice' + String(1) +  '_'  + String(example_count) +'\'); justShow(\'exampleChoice' + String(2) + '_'  + String(example_count) + '\'); experiment.clicked_show();">Show</button>';
+      	var button_to_show = '';
+      	if (buttons_shown == 0) { 
+	      	button_to_show = '<button class = "buttonAttr" type="button" id="' +  button_show_id +  '" onClick="showAndHide(\'ps1\', 2000); showAndHide(\'ps2\', 2000); showAndHide(\'ps3\', 2000); experiment.clicked_show();">Show</button>';
+	      	if (example_count == 3) {
+	      		button_to_show = '<button class = "buttonAttr" type="button" id="' +  button_show_id +  '" onClick="showAndHide(\'ps1\', 250); showAndHide(\'ps2\', 250); showAndHide(\'ps3\', 250); experiment.clicked_show();">Show</button>';
+	      	}
+      	}
+      	if (buttons_shown == 1) { 
+	      	button_to_show = '<button class = "buttonAttr" type="button" id="' +  button_show_id +  '" onClick="showAndHide(\'ps1\', 2000); showAndHide(\'ps2\', 2000); showAndHide(\'ps3\', 2000); justShow(\'exampleChoice' + String(0) +  '_'  + String(example_count) +'\'); justShow(\'exampleChoice' + String(1) +  '_'  + String(example_count) +'\'); justShow(\'exampleChoice' + String(2) + '_'  + String(example_count) + '\'); experiment.clicked_show();">Show</button>';
+	      	if (example_count == 3) {
+	      		button_to_show = '<button class = "buttonAttr" type="button" id="' +  button_show_id +  '" onClick="showAndHide(\'ps1\', 250); showAndHide(\'ps2\', 250); showAndHide(\'ps3\', 250); justShow(\'exampleChoice' + String(0) +  '_'  + String(example_count) +'\'); justShow(\'exampleChoice' + String(1) +  '_'  + String(example_count) +'\'); justShow(\'exampleChoice' + String(2) + '_'  + String(example_count) + '\'); experiment.clicked_show();">Show</button>';
+	      	}
       	}
 
 		var next_depending_on_trial = '';
@@ -179,6 +194,13 @@ var experiment = {
 		user_input_selection +='<tr>';
 		user_input_selection += '</tr></table>';
 		$("#selectionExample").html(user_input_selection)
+
+		// to minimize visibility
+		if (buttons_shown == 0) {
+			justHide(button_show_id);
+		};
+		
+
 		showSlide("example_trial");
 	},
 
@@ -226,13 +248,28 @@ var experiment = {
       	//} else {
       	//	button_advance_id += 'final_slide_button' + trial_counter;
       	//}
+
       	var button_to_show = '<button class = "buttonAttr" type="button" id="' +  button_show_id +  '" onClick="showAndHide(\'ps' + identity_of_1 + '\', ' + String(presentation_time) + '); showAndHide(\'ps' + identity_of_2 + '\', ' + String(presentation_time) + '); showAndHide(\'ps' + identity_of_3 + '\', ' + String(presentation_time) + '); justHide(\'' + button_show_id + '\'); ';
-      	button_to_show += 'justShow(\'tdchoice' + String(trial_counter) + '_' + String(0) +  '\'); justShow(\'tdchoice' + String(trial_counter) + '_' + String(1) +  '\'); justShow(\'tdchoice' + String(trial_counter) + '_' + String(2) +  '\'); experiment.clicked_show();">Show</button>';
+      	
+
+      	// Depending on whether you want buttons shown or not
+      	if (buttons_shown == 0) { 
+      		button_to_show += 'experiment.clicked_show();">Show</button>';
+      	}
+      	if (buttons_shown == 1) { 
+      		button_to_show += 'justShow(\'tdchoice' + String(trial_counter) + '_' + String(0) +  '\'); justShow(\'tdchoice' + String(trial_counter) + '_' + String(1) +  '\'); justShow(\'tdchoice' + String(trial_counter) + '_' + String(2) +  '\'); experiment.clicked_show();">Show</button>';
+      	}
 
 
       	// The trial counter to be added to the response table below
 		var number_trial_displayed = "Trial " + String(trial_counter + 1) + " /" + String(number_of_trials);
 
+		if (counter_shown == 0) {
+			number_trial_displayed = "            ";
+			if (trial_counter == 21 || trial_counter == 43) {
+				number_trial_displayed = "Trial " + String(trial_counter + 1) + " of " + String(number_of_trials);
+			}
+		}
 		var spaces_for_space = "            ";
       	// Dynamically create a button that either sends you to the same slide with updated
       	// picture values or, if the number of trials is reached, sends you to the end slide / or the "what was it about?" slide
@@ -271,7 +308,10 @@ var experiment = {
 
 		$("#userSelectionInputFields").html(user_input_selection)
 
-
+		// to minimize visibility
+		if (buttons_shown == 0) {
+			justHide(button_show_id);
+		}
 		showSlide("series_of_trials");
 	},
 
@@ -520,6 +560,7 @@ for (var i = 0; i < number_of_trials; i++){
     };
 };
 $("#num-total").text(list_of_image_names.length);
+$("#triangularTable").css({ "bottom": String(centerT) + "px", "right":String(centerL) + "px" });
 
 showSlide('preload');
 

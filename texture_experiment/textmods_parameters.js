@@ -3,6 +3,25 @@
 // Parameters and Stimulus Setup 
 
 
+
+// For screen stuff
+var centerT = (screen.availHeight/2 - 130);
+var centerB = (screen.availHeight/2 - 130);
+
+var centerL = (screen.availWidth/2 - 165);
+var centerR = (screen.availWidth/2 - 165);
+
+// Show buttons
+// 0 means "no buttons will be shown"
+// 1 means buttons are displated
+var buttons_shown = 0;
+
+// Show the counter "Trial 4 /66" - 0 is not, 1 is yes
+var counter_shown = 0;
+
+// Make a more principled centering of the cross. 0 means no extra centering, 1 means extra centering.
+var adjust_stimuli_center = 0;
+
 // Side of the equilateral triangle for stimuli display, in proportion of the width of the screen.
 var triangle_side_prop = 0.1;
 var triangle_side_pixels = 120;
@@ -164,12 +183,7 @@ var image_sources_for_example = [
     ];
 
 var list_of_image_names = [];
-for (var i = 0; i < number_of_trials; i++){
-    for (var j = 0; j < 3; j ++) {
-        list_of_image_names.push(list_of_image_paths[i][j]);
-    };
-};
-$("#num-total").text(list_of_image_names.length);
+
 
 
 var calibration_images = ["images/after_script/calibration/r.bmp", "images/after_script/calibration/g.bmp", "images/after_script/calibration/b.bmp"];
