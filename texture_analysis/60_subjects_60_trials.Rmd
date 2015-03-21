@@ -1,0 +1,247 @@
+---
+title: "Texture Recognition Analysis"
+author: "Andres Gomez Emilsson"
+date: "March 19, 2015"
+output: html_document
+---
+
+This is the analysis for the replication of Balas (2006) on texture discrimination. Participants were presented with three images, one of which was different from the other two and asked to select the "odd one out." 
+
+The data set
+------------
+
+The data contains 60 subjects, each performing a total of actions: In addition to 60 'real trials' that measure what we care about, we also have 4 'example trials' where the odd one out is known to the participant and 6 'sanity checks' (4 extremelly easy ones, 2 difficult) to determine whether participants were paying attention and understood the instructions (know which keys to press).
+
+```{r prelims}
+#install.packages('dplyr', repos='http://cran.rstudio.com/')
+#install.packages('tidyr', repos='http://cran.rstudio.com/')
+library(dplyr)
+library(tidyr)
+#install.packages('ggplot2')
+library(ggplot2)
+#install.packages('binom')
+library(binom)
+```
+
+
+
+Part 1: Data cleaning
+---------------------
+
+```{r data}
+d <- read.csv("real_trial.tsv", header=TRUE, sep="\t", row.names=NULL, stringsAsFactors = FALSE)
+```
+
+We now transform the values in arrays used to serialize the responses into individual variables (one column for each array index). Note this is done on for Answer.correct_ordered_trials and Answer.responses
+
+```{r data_cleaning}
+
+d <- subset(d, select = c(workerid, Answer.responses, Answer.correct_ordered_trials, Answer.example_chosen_positions, Answer.total_top, Answer.total_left, Answer.total_right, Answer.total_correct, Answer.about, Answer.comment, Answer.age, Answer.gender, Answer.time_shown))
+
+
+nam <- names(d)
+correct <- d$Answer.total_correct
+
+# De-serialize the arrays
+df <- NULL
+for (i in 1:length(d$Answer.responses)) {
+  is_responses <- d$Answer.responses[i]
+  is_responses <- substr(is_responses, 2, 132)
+  values <- as.integer(strsplit(is_responses, ",")[[1]])
+  
+  is_by_trial <- d$Answer.correct_ordered_trials[i]
+  is_by_trial <- substr(is_by_trial, 2, 132)
+  values_by_trial <- as.integer(strsplit(is_by_trial, ",")[[1]])
+  new_row_values <- c(values, values_by_trial)
+
+  example_response <- d$Answer.example_chosen_positions[i]
+  example_response <- substr(example_response, 2, 8)
+  value_of_examples <- as.integer(strsplit(example_response, ",")[[1]])
+  new_row_values <- c(new_row_values, value_of_examples)  
+  
+  df <- rbind(df, new_row_values)
+}
+
+# Responses (absolute stimuli names) and responses by trials. This constructs a vector with the names for the de-serialized variables.
+vector_names <- c()
+for (i in 1:12) {
+  cn <- paste("full_set_", as.character(i), sep = "")
+  vector_names <- c(vector_names, cn)
+}
+for (i in 1:12) {
+  cn <- paste("local_phase_", as.character(i), sep = "")
+  vector_names <- c(vector_names, cn)
+}
+for (i in 1:12) {
+  cn <- paste("magnitude_corr_", as.character(i), sep = "")
+  vector_names <- c(vector_names, cn)
+}
+for (i in 1:12) {
+  cn <- paste("marginals_", as.character(i), sep = "")
+  vector_names <- c(vector_names, cn)
+}
+for (i in 1:12) {
+  cn <- paste("subband_corr_", as.character(i), sep = "")
+  vector_names <- c(vector_names, cn)
+}
+vector_names <- c(vector_names, "calibration_60_190", "calibration_190_60", "calibration_10_240", "calibration_240_10", "calibration_110_130", "calibration_130_110")
+
+for (i in 1:66) {
+  cn <- paste("correct_by_trial_", as.character(i), sep = "")
+  vector_names <- c(vector_names, cn)
+}
+
+for (i in 1:4) {
+  cn <- paste("example_trial_", as.character(i), sep = "")
+  vector_names <- c(vector_names, cn)
+}
+
+colnames(df) <- vector_names
+rownames(df) <- 1:60
+df <- as.data.frame(df)
+
+df$number_of_examples_correct <- (df$example_trial_1 == 0) + (df$example_trial_2 == 2) + (df$example_trial_3 == 2) + (df$example_trial_4 == 1)
+
+# Remove further variables that occupy a lot of space and are not needed anymore: The arrays
+d <- subset(d, select =c(workerid, Answer.total_top, Answer.total_left, Answer.total_right, Answer.total_correct, Answer.about, Answer.comment, Answer.age, Answer.gender, Answer.time_shown))
+
+
+# This binds the de-serialized variables to a main wide style frame
+wide_d <- cbind(d, df)
+```
+
+
+
+```{r sanity_plots}
+
+# By trial
+by_t <- qplot(x = 1:66, colMeans(wide_d[,77:142]))
+by_t + stat_smooth() + xlab("Trial") + ylab("Prob. Correct") +  ggtitle("Proportion correct by trial #")
+
+# By ordered conditions
+by_c <- qplot(x = 1:66, colMeans(wide_d[,11:76]))
+by_c + xlab("Trial") + ylab("Prob. Correct") +  ggtitle("Proportion correct by condition #")
+
+
+# Plot of individual performances
+individual_performances <- rowSums(wide_d[,11:70])
+wide_d$individual_performances <- individual_performances
+individual_performances <- data.frame(individual_performances)
+mm <- mean(individual_performances$individual_performances)
+qplot(individual_performances, data=individual_performances, geom="histogram", binwidth = 1) +  geom_vline(aes(xintercept=c(20, mm), color = "0000ff")) + ggtitle("Correct out of 60")
+
+# Test for normalcy. It does not seem normal... maybe there are two underlying strategies used.
+shapiro.test(individual_performances$individual_performances)
+
+```
+
+
+
+Part 3: Turning into tidy data
+---------------------
+
+The gather operation to get a d.tidy tidy frame with one raw per each trial that we care about.
+```{r turn_in_tidy}
+d.tidy <- wide_d %>% gather("trial", "answer", 11:76)
+
+# Add features to each of the trials. 
+#Here is statistic removed
+condition_labs <- rep("full_set", 12*60)
+condition_labs <- c(condition_labs, rep("local_phase", 12*60))
+condition_labs <- c(condition_labs,  rep("magnitude_corr", 12*60))
+condition_labs <- c(condition_labs, rep("marginals", 12*60))
+condition_labs <- c(condition_labs, rep("subband_corr_1", 12*60))
+condition_labs <- c(condition_labs, rep("calibration_easy", 4*60))
+condition_labs <- c(condition_labs, rep("calibration_hard", 2*60))
+d.tidy$condition_labs <- condition_labs
+
+# Here is the specific image used
+image_kind <- rep("branches", 2*60)
+image_kind <- c(image_kind, rep("ice", 2*60))
+image_kind <- c(image_kind, rep("black_ovals", 2*60))
+image_kind <- c(image_kind, rep("wall_ovals", 2*60))
+image_kind <- c(image_kind, rep("mosaic", 2*60))
+image_kind <- c(image_kind, rep("wall_rocks", 2*60))
+image_kind <- rep(image_kind, 5)
+image_kind <- c(image_kind, rep("calibration_easy", 4*60), rep("calibration_hard", 2*60))
+d.tidy$image_kind <- image_kind
+
+# Here show whether the odd_one is the synthetic or the original one
+odd_one_kind <- rep(c("original", "synthetic"), 60*12*5/2)
+odd_one_kind <- c(odd_one_kind, rep("calibration_easy", 4*60), rep("calibration_hard", 2*60))
+d.tidy$odd_one_kind <- odd_one_kind
+
+
+```
+
+
+
+Part 4: Plotting results
+---------------------
+
+
+```{r plot_results}
+answers_by_condition <- aggregate(cbind(answer) ~ 
+                             condition_labs, data=d.tidy, sum)
+
+accuracies <- answers_by_condition$answer
+marginals <- accuracies[6]
+subband_corrs <- accuracies[7]
+magnitude_corrs <- accuracies[5]
+local_phases <- accuracies[4]
+full_sets <- accuracies[3]
+calibrations <- accuracies[1]
+
+
+total_per_condition <- length(wide_d[,1])*12
+of_possible = c(total_per_condition, total_per_condition, total_per_condition, total_per_condition, total_per_condition, length(wide_d[,1])*4)
+conditions <- c("Marginals", "Raw.Auto.", "Mag.Corr.", "Phase", "Full Set.", "Checks")
+corrects =  c(marginals, subband_corrs, magnitude_corrs, local_phases, full_sets, calibrations)
+correct_per_condition <- data.frame(conditions = conditions, corrects = corrects, 
+                                    of_possible = of_possible)
+ 
+
+correct_per_condition$means <- correct_per_condition$corrects / correct_per_condition$of_possible
+
+# To order properly
+correct_per_condition$conditions2 <- factor(correct_per_condition$conditions, as.character(correct_per_condition$conditions))
+
+
+# In ggplot
+means.barplot <- ggplot(aes(x = conditions2, y=means, fill = conditions2),
+                       data=correct_per_condition,  stat="identity") + coord_cartesian(ylim = c(0.3, 1)) + ggtitle("Replication for Lesion on Structured textures")
+means.barplot + geom_bar(stat = "identity", position = "stack") + geom_errorbar(aes(ymax=binom.confint(corrects, of_possible, conf.level = 0.95, methods = "bayes")$upper,
+                                  ymin=binom.confint(corrects, of_possible, conf.level = 0.95, methods = "bayes")$lower),
+                              position=position_dodge(0.9),
+                              data=correct_per_condition) + scale_y_continuous(breaks = seq(0.3,1, by = 0.025)) +
+  xlab("Statistic removed") + ylab("Probability of correct") +  geom_hline(aes(yintercept=c(0.333333))) 
+
+
+
+
+answers_by_image_kind <- aggregate(cbind(answer) ~ 
+                             image_kind, data=d.tidy, mean)
+
+
+answers_by_odd_one_kind <- aggregate(cbind(answer) ~ 
+                             odd_one_kind, data=d.tidy, mean)
+
+answer_comb <- answers_by_odd_one_kind <- aggregate(cbind(answer) ~ 
+                             odd_one_kind + image_kind, data=d.tidy, mean)
+
+```
+
+
+Part 5: Analysis
+---------------------
+
+```{r analysis}
+
+
+prop.test(marginals, total_per_condition, p = 0.33333)
+prop.test(magnitude_corrs, total_per_condition, p = 0.33333)
+
+
+
+```
+

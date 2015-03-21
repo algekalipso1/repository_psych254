@@ -54,6 +54,9 @@ You may see your HIT(s) with HITTypeId '3KOA8FMB2M8OIHHIFV44M5TN2C7NQQ' here:
 
 
 
-
+Assignments completed: 60/60 (100%)
+         Time elapsed: 2:45:19 (h:mm:ss)
+  Average submit time: 427.8 seconds
+~/Documents/Stanford/Winter2015/Psych254/hello/texture_experiment
 
 

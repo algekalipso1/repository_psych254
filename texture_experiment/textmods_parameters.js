@@ -60,12 +60,17 @@ var impath = "images/correct_after_script/";
 
 
 // Time of presentation for the main task
-var presentation_time = 250;
+var presentation_time = 20000;
 
 // List of filenames to use as stimuli
 // 60 trials total. 2 oddball X 5 statistical categories X 6 images ("X 3 image categories" if I was running the entire thing.)
 // Thus, each consecutive pair of even odd indexes are the two oddball conditions (2 synthetic, then 2 originals)
 // Never put consecutive stimuli numbers (like 0_0 and 0_1) because they can come from overlapping regions of the image
+
+// I just realized... my balancing of original images is all wrong. The Original index should change for the same pictures... not across the pictures!!!
+// I.e. "original/" + "0_5.bmp" is always the odd one out for the 0 series *in all of the lesion conditions. This leads to 5 times repeated odd one out... 
+// You could have achieved zero repetitions instead, you dumb. Next time change the list_of_image_paths to remove that problem! What if that is driving the 
+// above chance performance?
 var list_of_image_paths = [
     [impath + image_type + "original/" + "0_5.bmp", impath + image_type + "full_set/" + "0_0.bmp", impath + image_type + "full_set/" + "0_2.bmp"],
     [impath + image_type + "full_set/" + "0_4.bmp", impath + image_type + "original/" + "0_1.bmp", impath + image_type + "original/" + "0_3.bmp"],
