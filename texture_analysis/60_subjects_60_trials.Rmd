@@ -21,6 +21,8 @@ library(tidyr)
 library(ggplot2)
 #install.packages('binom')
 library(binom)
+
+library(lme4)
 ```
 
 
@@ -29,6 +31,7 @@ Part 1: Data cleaning
 ---------------------
 
 ```{r data}
+setwd("~/Documents/Stanford/Winter2015/Psych254/hello/texture_data")
 d <- read.csv("real_trial.tsv", header=TRUE, sep="\t", row.names=NULL, stringsAsFactors = FALSE)
 ```
 
@@ -133,6 +136,14 @@ qplot(individual_performances, data=individual_performances, geom="histogram", b
 # Test for normalcy. It does not seem normal... maybe there are two underlying strategies used.
 shapiro.test(individual_performances$individual_performances)
 
+# As a comparison, here is a simulation (with five times as many samples for smoothness) where the histogram is created by sampling from two Gaussain distribtiions with different means and standard deviations to approximate the empirical results.
+sim <- c(rnorm(200, 20, 3), rnorm(100, 27, 2))
+msim <- mean(sim)
+qplot(sim, geom="histogram", binwidth = 1) +  geom_vline(aes(xintercept=c(20, msim), color = "0000ff")) + ggtitle("Correct out of 60, mixture of Gaussians (20,3) and (27, 2)")
+
+# And testing the normality of the simulated data.
+shapiro.test(sim)
+
 ```
 
 
@@ -150,7 +161,7 @@ condition_labs <- rep("full_set", 12*60)
 condition_labs <- c(condition_labs, rep("local_phase", 12*60))
 condition_labs <- c(condition_labs,  rep("magnitude_corr", 12*60))
 condition_labs <- c(condition_labs, rep("marginals", 12*60))
-condition_labs <- c(condition_labs, rep("subband_corr_1", 12*60))
+condition_labs <- c(condition_labs, rep("subband_corr", 12*60))
 condition_labs <- c(condition_labs, rep("calibration_easy", 4*60))
 condition_labs <- c(condition_labs, rep("calibration_hard", 2*60))
 d.tidy$condition_labs <- condition_labs
@@ -179,7 +190,6 @@ d.tidy$odd_one_kind <- odd_one_kind
 Part 4: Plotting results
 ---------------------
 
-
 ```{r plot_results}
 answers_by_condition <- aggregate(cbind(answer) ~ 
                              condition_labs, data=d.tidy, sum)
@@ -207,7 +217,7 @@ correct_per_condition$means <- correct_per_condition$corrects / correct_per_cond
 correct_per_condition$conditions2 <- factor(correct_per_condition$conditions, as.character(correct_per_condition$conditions))
 
 
-# In ggplot
+# Use ggplot to show the results. 
 means.barplot <- ggplot(aes(x = conditions2, y=means, fill = conditions2),
                        data=correct_per_condition,  stat="identity") + coord_cartesian(ylim = c(0.3, 1)) + ggtitle("Replication for Lesion on Structured textures")
 means.barplot + geom_bar(stat = "identity", position = "stack") + geom_errorbar(aes(ymax=binom.confint(corrects, of_possible, conf.level = 0.95, methods = "bayes")$upper,
@@ -218,16 +228,20 @@ means.barplot + geom_bar(stat = "identity", position = "stack") + geom_errorbar(
 
 
 
-
+# The mean accuracy for each of the images (aggregated accros statistic removed condition).
 answers_by_image_kind <- aggregate(cbind(answer) ~ 
                              image_kind, data=d.tidy, mean)
+answers_by_image_kind
 
-
+# The mean accuracy depending on whether the synthetic or the original was the odd one out.
 answers_by_odd_one_kind <- aggregate(cbind(answer) ~ 
                              odd_one_kind, data=d.tidy, mean)
+answers_by_odd_one_kind
 
+# The mean accuracy partitioned by specific image and condition.
 answer_comb <- answers_by_odd_one_kind <- aggregate(cbind(answer) ~ 
-                             odd_one_kind + image_kind, data=d.tidy, mean)
+                             condition_labs + image_kind, data=d.tidy, mean)
+answer_comb
 
 ```
 
@@ -237,11 +251,66 @@ Part 5: Analysis
 
 ```{r analysis}
 
-
+# Difference from chance for each condition
 prop.test(marginals, total_per_condition, p = 0.33333)
+prop.test(subband_corrs, total_per_condition, p = 0.33333)
+prop.test(local_phases, total_per_condition, p = 0.33333)
 prop.test(magnitude_corrs, total_per_condition, p = 0.33333)
+prop.test(full_sets, total_per_condition, p = 0.33333)
 
 
+# Determining the order of accuracy improvements
+prop.test(c(marginals, magnitude_corrs), c(total_per_condition, total_per_condition), alternative = c("greater"))
+
+# Difference between the accuracy for each condition where a statistical constraint is removed compared to the full set condtion:
+prop.test(c(marginals, full_sets), c(total_per_condition, total_per_condition), alternative = c("greater"))
+prop.test(c(subband_corrs, full_sets), c(total_per_condition, total_per_condition), alternative = c("greater"))
+prop.test(c(local_phases, full_sets), c(total_per_condition, total_per_condition), alternative = c("greater"))
+prop.test(c(magnitude_corrs, full_sets), c(total_per_condition, total_per_condition), alternative = c("greater"))
+
+
+# Additional analysis - with possible random and fixed effects, such as the particular particupant.
+
+fixed_by_user <- lmer(answer ~ condition_labs + (1 | workerid), data = d.tidy)
+summary(fixed_by_user)
+
+```
+
+
+Here we have a few miscelaneous analysis and exploration that seek to gain insights into the problems with the replication.
+
+```{r further_analysis}
+hist(wide_d$Answer.total_left)
+hist(wide_d$Answer.total_right)
+hist(wide_d$Answer.total_top)
+
+
+wide_d$Answer.comment
+
+d.tidy$male <- 
+  d.tidy$Answer.gender == "\"m\"" |
+  d.tidy$Answer.gender == "\"M\"" |
+  d.tidy$Answer.gender == "\"male\"" |
+  d.tidy$Answer.gender == "\"Male\""
+
+summary(glm(answer ~ male + condition_labs, data = d.tidy))
+
+# People who said that the experiment was hard (that exact word)
+hard <- c(1, 5, 33, 34, 60)
+
+# People who said it was challenging in some way or another.
+challenging <- c(1, 5, 8, 14, 15, 26, 30, 33, 34, 35, 42, 43, 44, 51, 60)
+
+wide_d$said_it_was_challenging <- 1:60 %in% challenging
+
+score_given_hard <- subset(wide_d$Answer.total_correct, wide_d$said_it_was_challenging)
+score_given_lack_of_hard_comment <- subset(wide_d$Answer.total_correct, !wide_d$said_it_was_challenging)
+mean(score_given_hard)
+mean(score_given_lack_of_hard_comment)
+
+# To test whether the scores of people who mentioned that it was hard are not
+# significantly different from those who didn't.
+t.test(score_given_hard, score_given_lack_of_hard_comment)
 
 ```
 
